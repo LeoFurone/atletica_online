@@ -1,0 +1,1 @@
+final double tablet = 768;

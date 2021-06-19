@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1009889363610",
+    "project_id": "atletica-online",
+    "storage_bucket": "atletica-online.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009889363610:android:f5b612228abb79e126c123",
+        "android_client_info": {
+          "package_name": "br.unicamp.ft.atletica_online"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1009889363610-mo930r6o24ul07e90b2sm1hdv5mme4ta.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8rL-IcA-hWTjQoTWNuBqjisk7DKgp3YA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1009889363610-mo930r6o24ul07e90b2sm1hdv5mme4ta.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

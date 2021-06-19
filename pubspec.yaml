@@ -23,11 +23,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  font_awesome_flutter: ^8.12.0
+  font_awesome_flutter: ^9.0.0
   google_fonts: ^2.0.0
   auto_size_text: ^2.1.0
   get: ^3.26.0
   fl_chart: ^0.20.1
+  cloud_firestore: ^1.0.7
+  firebase_core: ^1.1.0
+  firebase_auth: ^1.2.0
+  device_preview: ^0.7.3
+  flutter_email_sender: ^5.0.0
+
 
 
 
@@ -49,6 +55,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+     - assets/images/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

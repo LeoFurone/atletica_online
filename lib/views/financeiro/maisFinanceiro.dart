@@ -42,7 +42,7 @@ class MaisFinanceiro extends StatelessWidget {
                         Expanded(
                           flex: 30,
                           child: Container(
-                            color: azul_principal,
+                            color: tipoTela == 1 ? Colors.green[300] : Colors.red[300] ,
                             alignment: Alignment.center,
                             child: FittedBox(
                               fit: BoxFit.contain,

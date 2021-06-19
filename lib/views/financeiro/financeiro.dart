@@ -3,6 +3,7 @@ import 'package:atletica_online/components/dialogs/opcoesFinanceiro.dart';
 import 'package:atletica_online/components/myCircularProgress.dart';
 import 'package:atletica_online/components/myCircularProgressBranco.dart';
 import 'package:atletica_online/components/tituloSessao.dart';
+import 'package:atletica_online/controllers/financeiro/financeiroController.dart';
 import 'package:atletica_online/graficosFinanceiro.dart';
 import 'package:atletica_online/views/financeiro/maisFinanceiro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,12 +13,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Financeiro extends StatelessWidget {
+  final FinanceiroController financeiroController =
+      Get.put(FinanceiroController());
 
   final double heightScreen;
   final double widthScreen;
   final double safeArea;
 
-  const Financeiro(
+  Financeiro(
       {Key? key,
       required this.heightScreen,
       required this.widthScreen,
@@ -25,11 +28,10 @@ class Financeiro extends StatelessWidget {
       : super(key: key);
 
   Future<DocumentSnapshot> trazerValorCaixa() async {
-    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+    return FirebaseFirestore.instance
         .collection('financeiro')
         .doc('caixa')
         .get();
-    return documentSnapshot;
   }
 
   Future<QuerySnapshot> trazerGastos() async {
@@ -80,6 +82,16 @@ class Financeiro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseFirestore.instance
+        .collection('financeiro')
+        .doc('caixa')
+        .snapshots()
+        .listen((event) {
+      String valor = event['valor'];
+      double valorDouble = double.parse(valor);
+      financeiroController.atualizarCaixaAtual(valorDouble);
+    });
+
     List<QueryDocumentSnapshot> documentsGastos = [];
     List<QueryDocumentSnapshot> documentsRecebidos = [];
     List<QueryDocumentSnapshot> documentsRecebidosMes = [];
@@ -116,32 +128,19 @@ class Financeiro extends StatelessWidget {
                       future: trazerValorCaixa(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
-
-                          if (snapshot.data!['valor'].runtimeType == double) {
-                            double value = snapshot.data!['valor'];
-                            return Text(
-                              'R\$ ' + value.toPrecision(2).toString(),
-                              style: GoogleFonts.montserrat(
-                                fontSize: 40,
-                                color: Colors.white,
-                              ),
-                            );
-                          }
-
-                          if (snapshot.data!['valor'].runtimeType == int) {
-                            int value = snapshot.data!['valor'];
-                            return Text(
-                              'R\$ ' + value.toString(),
-                              style: GoogleFonts.montserrat(
-                                fontSize: 40,
-                                color: Colors.white,
-                              ),
-                            );
-                          }
+                          financeiroController.atualizarCaixaAtual(double.parse(snapshot.data!['valor']));
+                          return GetBuilder<FinanceiroController>(
+                              builder: (_) {
+                                return Text(
+                                  'R\$ ' + financeiroController.caixa_atual.toPrecision(2).toString(),
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 40,
+                                    color: Colors.white,
+                                  ),
+                                );
+                              });
 
                           return Text('erro');
-
-
                         } else {
                           return Container(
                             height: 40,
@@ -214,7 +213,10 @@ class Financeiro extends StatelessWidget {
                                             }
 
                                             return Text(
-                                              'R\$ ' + valor.toPrecision(2).toString(),
+                                              'R\$ ' +
+                                                  valor
+                                                      .toPrecision(2)
+                                                      .toString(),
                                               style: GoogleFonts.quicksand(
                                                   fontSize: 20,
                                                   color: Colors.white,
@@ -280,7 +282,10 @@ class Financeiro extends StatelessWidget {
                                             }
 
                                             return Text(
-                                              'R\$ ' + valor.toPrecision(2).toString(),
+                                              'R\$ ' +
+                                                  valor
+                                                      .toPrecision(2)
+                                                      .toString(),
                                               style: GoogleFonts.quicksand(
                                                   fontSize: 20,
                                                   color: Colors.white,

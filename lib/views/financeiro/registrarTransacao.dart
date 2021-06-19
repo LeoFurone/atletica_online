@@ -255,9 +255,9 @@ class RegistrarTransacao extends StatelessWidget {
                           collectionReference.doc(DateTime.now().toString()).set(dadosApp);
                           DocumentReference documentReference = FirebaseFirestore.instance.collection('financeiro').doc('caixa');
                           documentReference.get().then((value) {
-                            var valorAdd = value['valor'] + double.parse(valor.text.replaceAll(',', '.'));
+                            double valorAdd = double.parse(value['valor']) + double.parse(valor.text.replaceAll(',', '.'));
                             Map<String,dynamic> dadosUpdate = {
-                              "valor": valorAdd,
+                              "valor": valorAdd.toString(),
                             };
                             documentReference.update(dadosUpdate);
                           });
@@ -287,9 +287,9 @@ class RegistrarTransacao extends StatelessWidget {
                           collectionReference.doc(DateTime.now().toString()).set(dadosApp);
                           DocumentReference documentReference = FirebaseFirestore.instance.collection('financeiro').doc('caixa');
                           documentReference.get().then((value) {
-                            var valorSub = value['valor'] - double.parse(valor.text.replaceAll(',', '.'));
+                            double valorSub = double.parse(value['valor']) - double.parse(valor.text.replaceAll(',', '.'));
                             Map<String,dynamic> dadosUpdate = {
-                              "valor": valorSub,
+                              "valor": valorSub.toString(),
                             };
                             documentReference.update(dadosUpdate);
                           });

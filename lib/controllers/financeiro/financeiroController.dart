@@ -2,10 +2,6 @@ import 'package:get/get.dart';
 
 class FinanceiroController extends GetxController {
 
-  void atualizar(){
-    update();
-  }
-
   double caixa_atual = 0;
 
   void atualizarCaixaAtual(double newValue){

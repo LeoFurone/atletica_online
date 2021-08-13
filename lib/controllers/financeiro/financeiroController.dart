@@ -23,8 +23,19 @@ class FinanceiroController extends GetxController {
     update();
   }
 
-  List recebidos_list = [];
-  List gastos_list = [];
+  List documentsRecebidos = [];
+
+  void atualizarDocumentsRecebidos(List newDocumentsRecebidos){
+    documentsRecebidos = newDocumentsRecebidos;
+    update();
+  }
+
+  List documentsGastos = [];
+
+  void atualizarDocumentsGastos(List newDocumentsGastos) {
+    documentsGastos = newDocumentsGastos;
+    update();
+  }
 
 
 

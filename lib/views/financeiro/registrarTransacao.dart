@@ -3,7 +3,8 @@ import 'package:atletica_online/components/dialogs/aviso.dart';
 import 'package:atletica_online/components/myAppBar.dart';
 import 'package:atletica_online/components/tituloSessao.dart';
 import 'package:atletica_online/controllers/financeiro/financeiroController.dart';
-import 'package:atletica_online/graficosFinanceiro.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
+import 'graficosFinanceiro.dart';
 import '../../controllers/financeiro/transacaoController.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegistrarTransacao extends StatelessWidget {
+
+  final FinanceiroController financeiroController = Get.find();
+
   final TransacaoController transacaoController =
       Get.put(TransacaoController());
   final TextEditingController valor = TextEditingController();
@@ -21,6 +25,7 @@ class RegistrarTransacao extends StatelessWidget {
         .collection('financeiro')
         .doc('fontes')
         .collection('dados')
+        .where('ativa', isEqualTo: true)
         .get();
     return querySnapshot;
   }
@@ -28,6 +33,8 @@ class RegistrarTransacao extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
 
     var widthScreen = MediaQuery.of(context).size.width;
     var heightScreen = MediaQuery.of(context).size.height;
@@ -234,71 +241,86 @@ class RegistrarTransacao extends StatelessWidget {
                   },
                   child: InkWell(
                     onTap: () async {
+
+                      bool internet = await DataConnectionChecker().hasConnection;
+
                       if(
                         valor.text.isNotEmpty &&
                         transacaoController.tipo != 0 &&
                         descricao.text.isNotEmpty &&
                         transacaoController.fonte != ''
                       ) {
-                        if (transacaoController.tipo == 1) {
-                          var mesAtual = DateTime.now().toString().substring(5,7);
-                          var anoAtual = DateTime.now().toString().substring(0,4);
-                          Map<String,dynamic> dadosApp = {
-                            "valor": double.parse(valor.text.replaceAll(',', '.')),
-                            "descricao": descricao.text,
-                            "fonte": transacaoController.fonte,
-                            "mes": mesAtual,
-                            "ano": anoAtual
-                          };
 
-                          CollectionReference collectionReference = FirebaseFirestore.instance.collection('financeiro').doc('recebidos').collection('dados');
-                          collectionReference.doc(DateTime.now().toString()).set(dadosApp);
-                          DocumentReference documentReference = FirebaseFirestore.instance.collection('financeiro').doc('caixa');
-                          documentReference.get().then((value) {
-                            double valorAdd = double.parse(value['valor']) + double.parse(valor.text.replaceAll(',', '.'));
-                            Map<String,dynamic> dadosUpdate = {
-                              "valor": valorAdd.toString(),
+
+
+                        if(internet == true) {
+                          if (transacaoController.tipo == 1) {
+                            var mesAtual = DateTime.now().toString().substring(5,7);
+                            var anoAtual = DateTime.now().toString().substring(0,4);
+                            Map<String,dynamic> dadosApp = {
+                              "valor": double.parse(valor.text.replaceAll(',', '.')),
+                              "descricao": descricao.text,
+                              "fonte": transacaoController.fonte,
+                              "mes": mesAtual,
+                              "ano": anoAtual
                             };
-                            documentReference.update(dadosUpdate);
-                          });
-                          await Get.dialog(
-                              Aviso(titulo: 'Transação armazenada com sucesso!',
-                                  subTitulo: '',
-                                  color: Colors.green)
-                          );
-                          Get.back();
+
+                            CollectionReference collectionReference = FirebaseFirestore.instance.collection('financeiro').doc('recebidos').collection('dados');
+                            collectionReference.doc(DateTime.now().toString()).set(dadosApp);
+                            DocumentReference documentReference = FirebaseFirestore.instance.collection('financeiro').doc('caixa');
+                            documentReference.get().then((value) {
+                              double valorAdd = double.parse(value['valor']) + double.parse(valor.text.replaceAll(',', '.'));
+                              Map<String,dynamic> dadosUpdate = {
+                                "valor": valorAdd.toString(),
+                              };
+                              documentReference.update(dadosUpdate);
+
+                            } );
+
+                            await Get.dialog(
+                                Aviso(titulo: 'Transação armazenada com sucesso!',
+                                    subTitulo: '',
+                                    color: Colors.green)
+                            );
+                            Get.back();
 
 
-                        }
+                          }
 
-                        if (transacaoController.tipo == 2) {
-                          var mesAtual = DateTime.now().toString().substring(5,7);
-                          var anoAtual = DateTime.now().toString().substring(0,4);
+                          if (transacaoController.tipo == 2) {
+                            var mesAtual = DateTime.now().toString().substring(5,7);
+                            var anoAtual = DateTime.now().toString().substring(0,4);
 
-                          Map<String,dynamic> dadosApp = {
-                          "valor": double.parse(valor.text.replaceAll(',', '.')),
-                          "descricao": descricao.text,
-                          "fonte": transacaoController.fonte,
-                          "mes": mesAtual,
-                          "ano": anoAtual,
-                          };
-
-                          CollectionReference collectionReference = FirebaseFirestore.instance.collection('financeiro').doc('gastos').collection('dados');
-                          collectionReference.doc(DateTime.now().toString()).set(dadosApp);
-                          DocumentReference documentReference = FirebaseFirestore.instance.collection('financeiro').doc('caixa');
-                          documentReference.get().then((value) {
-                            double valorSub = double.parse(value['valor']) - double.parse(valor.text.replaceAll(',', '.'));
-                            Map<String,dynamic> dadosUpdate = {
-                              "valor": valorSub.toString(),
+                            Map<String,dynamic> dadosApp = {
+                              "valor": double.parse(valor.text.replaceAll(',', '.')),
+                              "descricao": descricao.text,
+                              "fonte": transacaoController.fonte,
+                              "mes": mesAtual,
+                              "ano": anoAtual,
                             };
-                            documentReference.update(dadosUpdate);
-                          });
 
-                          await Get.dialog(Aviso(titulo: 'Transação armazenada com sucesso!',
-                              subTitulo: '',
-                              color: Colors.green));
-                          Get.back();
+                            CollectionReference collectionReference = FirebaseFirestore.instance.collection('financeiro').doc('gastos').collection('dados');
+                            collectionReference.doc(DateTime.now().toString()).set(dadosApp);
+                            DocumentReference documentReference = FirebaseFirestore.instance.collection('financeiro').doc('caixa');
+                            documentReference.get().then((value) {
+                              double valorSub = double.parse(value['valor']) - double.parse(valor.text.replaceAll(',', '.'));
+                              Map<String,dynamic> dadosUpdate = {
+                                "valor": valorSub.toString(),
+                              };
+                              documentReference.update(dadosUpdate);
 
+                            });
+
+                            await Get.dialog(Aviso(titulo: 'Transação armazenada com sucesso!',
+                                subTitulo: '',
+                                color: Colors.green));
+                            Get.back();
+
+                          }
+                        } else {
+                          Get.dialog(Aviso(titulo: 'Não há conexão com a Internet',
+                              subTitulo: 'Confira a disponibilidade em seu dispositivo.',
+                              color: Colors.red));
                         }
 
                       } else {

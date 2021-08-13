@@ -1,3 +1,4 @@
+import 'package:atletica_online/views/financeiro/editaFontes.dart';
 import 'package:atletica_online/views/financeiro/registrarTransacao.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -45,10 +46,20 @@ class _OpcoesFinanceiroState extends State<OpcoesFinanceiro> {
                         Get.back();
                         Get.to(() => RegistrarTransacao());
                       },
-                      child: item('Adicionar transação', FontAwesomeIcons.fileInvoiceDollar),
+                      child: item('Adicionar transação',
+                          FontAwesomeIcons.fileInvoiceDollar),
                     ),
                     linhaDivisoria(),
-                    item('Alguma opção aqui', FontAwesomeIcons.infinity),
+                    InkWell(
+                      onTap: () {
+                        Get.back();
+                        Get.to(
+                            () => EditaFontes()
+                        );
+                      },
+                      child: item(
+                          'Editar fontes de caixa', FontAwesomeIcons.wallet),
+                    ),
                   ],
                 ),
               ),

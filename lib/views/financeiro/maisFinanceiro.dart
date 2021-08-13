@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class MaisFinanceiro extends StatelessWidget {
   final int tipoTela;
-  final List<QueryDocumentSnapshot> documents;
+  final List<dynamic> documents;
 
   const MaisFinanceiro(
       {Key? key, required this.tipoTela, required this.documents})
@@ -53,7 +53,7 @@ class MaisFinanceiro extends StatelessWidget {
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.quicksand(
                                     fontSize: 24,
-                                    color: Colors.white
+                                    color: Colors.black
                                   ),
                                 ),
                               ),

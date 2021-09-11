@@ -15,4 +15,11 @@ class MenuController extends GetxController {
     temAtletica = novoTemAtletica;
     update();
   }
+
+  bool criouUsuario = false;
+
+  void atualizarCriouUsuario(bool novoCriouUsuario) {
+    criouUsuario = novoCriouUsuario;
+    update();
+  }
 }

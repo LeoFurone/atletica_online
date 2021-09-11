@@ -29,6 +29,8 @@ class Home extends StatelessWidget {
     var heightScreen = MediaQuery.of(context).size.height;
     var safeArea = MediaQuery.of(context).padding.top;
 
+    String? atletica;
+
     List<Widget> telas = [
       Dashboard(
           heightScreen: heightScreen,
@@ -56,192 +58,235 @@ class Home extends StatelessWidget {
       future: FirebaseFirestore.instance.collection('mapeamento').doc(FirebaseAuth.instance.currentUser!.uid).get(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data!.exists) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                return GetBuilder<MenuController>(
-                  init: MenuController(),
-                  builder: (_) {
-                    String atletica = snapshot.data!['atletica'];
-                    atletica != '' ? menuController.atualizarTemAtletica(true):menuController.atualizarTemAtletica(false);
+          return GetBuilder<MenuController>(
+            builder: (_) {
+              if (snapshot.data!.exists || menuController.criouUsuario) {
 
-                    if(menuController.temAtletica) {
-                      return Scaffold(
-                        body: Container(
-                          width: widthScreen,
-                          alignment: Alignment.topCenter,
-                          child: GetBuilder<MenuController>(
-                              builder: (_) {
-                                return IndexedStack(
-                                  children: telas,
-                                  index: menuController.index,
-                                );
-                              }),
-                        ),
-                        bottomNavigationBar: Container(
-                          height: heightScreen * 0.1,
-                          width: widthScreen,
-                          decoration: BoxDecoration(
-                            color: azul_principal,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15)),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    menuController.atualizarIndex(0);
-                                  },
-                                  child: GetBuilder<MenuController>(
-                                    init: MenuController(),
-                                    builder: (_) {
-                                      return itemMenu(
-                                          heightScreen,
-                                          FontAwesomeIcons.home,
-                                          'Home',
-                                          0,
-                                          menuController.index);
-                                    },
-                                  ),
-                                ),
+                if(menuController.criouUsuario && FirebaseAuth.instance.currentUser!.uid != null) {
+                  FirebaseFirestore.instance.collection('mapeamento').doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) {
+                    atletica = value['atletica'];
+                  });
+                } else {
+                  atletica = snapshot.data!['atletica'];
+                }
+                atletica == '' || atletica == null? menuController.atualizarTemAtletica(false):menuController.atualizarTemAtletica(true);
+
+                if(menuController.temAtletica) {
+                  return Scaffold(
+                    body: Container(
+                      width: widthScreen,
+                      alignment: Alignment.topCenter,
+                      child: GetBuilder<MenuController>(
+                          builder: (_) {
+                            return IndexedStack(
+                              children: telas,
+                              index: menuController.index,
+                            );
+                          }),
+                    ),
+                    bottomNavigationBar: Container(
+                      height: heightScreen * 0.1,
+                      width: widthScreen,
+                      decoration: BoxDecoration(
+                        color: azul_principal,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                menuController.atualizarIndex(0);
+                              },
+                              child: GetBuilder<MenuController>(
+                                builder: (_) {
+                                  return itemMenu(
+                                      heightScreen,
+                                      FontAwesomeIcons.home,
+                                      'Home',
+                                      0,
+                                      menuController.index);
+                                },
                               ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    menuController.atualizarIndex(1);
-                                  },
-                                  child: GetBuilder<MenuController>(
-                                    init: MenuController(),
-                                    builder: (_) {
-                                      return itemMenu(
-                                          heightScreen,
-                                          FontAwesomeIcons.dollarSign,
-                                          'Financeiro',
-                                          1,
-                                          menuController.index);
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    menuController.atualizarIndex(2);
-                                  },
-                                  child: GetBuilder<MenuController>(
-                                    init: MenuController(),
-                                    builder: (_) {
-                                      return itemMenu(
-                                          heightScreen,
-                                          FontAwesomeIcons.calendarAlt,
-                                          'Atividades',
-                                          2,
-                                          menuController.index);
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    menuController.atualizarIndex(3);
-                                  },
-                                  child: GetBuilder<MenuController>(
-                                    init: MenuController(),
-                                    builder: (_) {
-                                      return itemMenu(
-                                          heightScreen,
-                                          FontAwesomeIcons.boxOpen,
-                                          'Patrimônio',
-                                          3,
-                                          menuController.index);
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    menuController.atualizarIndex(4);
-                                  },
-                                  child: GetBuilder<MenuController>(
-                                    init: MenuController(),
-                                    builder: (_) {
-                                      return itemMenu(
-                                          heightScreen,
-                                          FontAwesomeIcons.cog,
-                                          'Opções',
-                                          4,
-                                          menuController.index);
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Scaffold(
-                        body: Column(
-                          children: [
-                            MyAppBar(
-                              title: 'Código da Atlética',
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                menuController.atualizarIndex(1);
+                              },
+                              child: GetBuilder<MenuController>(
+                                builder: (_) {
+                                  return itemMenu(
+                                      heightScreen,
+                                      FontAwesomeIcons.dollarSign,
+                                      'Financeiro',
+                                      1,
+                                      menuController.index);
+                                },
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                menuController.atualizarIndex(2);
+                              },
+                              child: GetBuilder<MenuController>(
+                                builder: (_) {
+                                  return itemMenu(
+                                      heightScreen,
+                                      FontAwesomeIcons.calendarAlt,
+                                      'Atividades',
+                                      2,
+                                      menuController.index);
+                                },
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                menuController.atualizarIndex(3);
+                              },
+                              child: GetBuilder<MenuController>(
+                                builder: (_) {
+                                  return itemMenu(
+                                      heightScreen,
+                                      FontAwesomeIcons.boxOpen,
+                                      'Patrimônio',
+                                      3,
+                                      menuController.index);
+                                },
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                menuController.atualizarIndex(4);
+                              },
+                              child: GetBuilder<MenuController>(
+                                builder: (_) {
+                                  return itemMenu(
+                                      heightScreen,
+                                      FontAwesomeIcons.cog,
+                                      'Opções',
+                                      4,
+                                      menuController.index);
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  return GestureDetector(
+                    onTap: () {
+                      FocusScopeNode currentFocus = FocusScope.of(context);
+                      if (!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                      }
+                    },
+                    child: Scaffold(
+                      body: Column(
+                        children: [
+                          MyAppBar(
+                            title: 'Código da Atlética',
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Coloque o código da sua Associação Atlética para ser incluído dentro de sua organização.',
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 14,
+                                  letterSpacing: 1.5,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                          TextField(controller: codigoAtletica),
+                          SizedBox(height: 16),
+                          GestureDetector(
+                            onTap: () async {
+                              FocusScopeNode currentFocus = FocusScope.of(context);
+                              if (!currentFocus.hasPrimaryFocus) {
+                                currentFocus.unfocus();
+                              }
+
+                              if(codigoAtletica.text != "") {
+
+                                DocumentSnapshot existe_atletica = await FirebaseFirestore.instance.collection('atleticas').doc(codigoAtletica.text).get();
+
+                                if(existe_atletica.exists) {
+                                  DocumentSnapshot atualizar_atletica = await FirebaseFirestore.instance.collection('mapeamento').doc(FirebaseAuth.instance.currentUser!.uid).get();
+                                  await atualizar_atletica.reference.update({
+                                    "admin": false,
+                                    "atletica": codigoAtletica.text,
+                                  });
+                                  Get.offAll(() => Home());
+                                } else {
+                                  print('atletica não existente');
+                                }
+                              } else {
+                                print('em branco');
+                              }
+
+
+
+                            },
+                            child: Container(
+                              height: 40,
+                              width: widthScreen / 2,
+                              color: azul_principal,
+                              alignment: Alignment.center,
                               child: Text(
-                                'Coloque o código da sua Associação Atlética para ser incluído dentro de sua organização.',
+                                'Entrar'.toUpperCase(),
                                 style: GoogleFonts.montserrat(
-                                    fontSize: 14,
-                                    letterSpacing: 1.5,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400),
+                                    fontSize: 18,
+                                    letterSpacing: 2.5,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
                               ),
                             ),
-                            TextField(controller: codigoAtletica),
-                          ],
-                        ),
-                      );
-                    }
-
-                  },
-                );
-              case ConnectionState.waiting:
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              } else {
+                CollectionReference collectionReference =
+                FirebaseFirestore.instance.collection('mapeamento');
+                collectionReference
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .set({
+                  "admin": false,
+                  "atletica": "",
+                });
+                menuController.atualizarCriouUsuario(true);
                 return Scaffold(
                   body: Container(
                     alignment: Alignment.center,
-                    child: MyCircularProgress(),
+                    child: Text('teste 2'),
+//                child: MyCircularProgress(),
                   ),
                 );
-              default:
-                return Text('vai saber');
-            }
-          } else {
-            CollectionReference collectionReference =
-                FirebaseFirestore.instance.collection('mapeamento');
-            collectionReference
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .set({
-              "admin": false,
-              "atletica": "",
-            });
-            return Scaffold(
-              body: Container(
-                alignment: Alignment.center,
-                child: MyCircularProgress(),
-              ),
-            );
-          }
+              }
+            },
+          );
         } else {
           return Scaffold(
             body: Container(
               alignment: Alignment.center,
-              child: MyCircularProgress(),
+              child: Text('teste 1'),
+//              child: MyCircularProgress(),
             ),
           );
         }

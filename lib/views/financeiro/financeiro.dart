@@ -673,7 +673,7 @@ class Financeiro extends StatelessWidget {
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.symmetric(vertical: 4),
-                                        child: itemFonte(dicionario_resultado[fontes[index].id], fontes[index]['descricao']),
+                                        child: itemFonte(dicionario_resultado[fontes[index].id] == null ? '0,0' : dicionario_resultado[fontes[index].id], fontes[index]['descricao']),
                                       ),
                                       index != fontes.length - 1 ? linhaDivisoria() : Container(),
                                     ],
@@ -764,6 +764,7 @@ class Financeiro extends StatelessWidget {
   }
 
   Row itemRecebidos(double valor, String titulo) {
+
     return Row(
       children: [
         Padding(

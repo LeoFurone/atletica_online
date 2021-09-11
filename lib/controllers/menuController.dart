@@ -8,4 +8,11 @@ class MenuController extends GetxController {
     index = newIndex;
     update();
   }
+
+  bool temAtletica = false;
+
+  void atualizarTemAtletica(bool novoTemAtletica) {
+    temAtletica = novoTemAtletica;
+    update();
+  }
 }

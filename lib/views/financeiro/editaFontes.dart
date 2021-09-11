@@ -1,3 +1,5 @@
+import 'package:atletica_online/components/colors.dart';
+import 'package:atletica_online/components/dialogs/adicionaFonte.dart';
 import 'package:atletica_online/components/myAppBar.dart';
 import 'package:atletica_online/components/myCircularProgress.dart';
 import 'package:atletica_online/components/tituloSessao.dart';
@@ -55,51 +57,18 @@ class EditaFontes extends StatelessWidget {
     var safeArea = MediaQuery.of(context).padding.top;
 
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MyAppBar(
-            title: 'OPÇÕES DE FONTE FINANCEIRA',
-            back: true,
-          ),
-          SizedBox(height: 8),
-          Container(
-            width: widthScreen,
-            child: GetBuilder<EditaFontesController>(builder: (_) {
-              if (editaFontesController.documentsAtivos == null) {
-                return Container(
-                  height: 40,
-                  width: 40,
-                  alignment: Alignment.center,
-                  child: MyCircularProgress(),
-                );
-              } else {
-                if (editaFontesController.documentsAtivos!.length != 0) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TituloSessao(titulo: 'Fontes Ativas'),
-                      Wrap(
-                        children: List<Widget>.generate(
-                            editaFontesController.documentsAtivos!.length,
-                            (int index) {
-                          return itemFonte(editaFontesController
-                              .documentsAtivos![index]['descricao']);
-                        }),
-                      ),
-                    ],
-                  );
-                } else {
-                  return Container();
-                }
-              }
-            }),
-          ),
-          SizedBox(height: 16),
-          Container(
-            width: widthScreen,
-            child: GetBuilder<EditaFontesController>(
-              builder: (_) {
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            MyAppBar(
+              title: 'OPÇÕES DE FONTE FINANCEIRA',
+              back: true,
+            ),
+            SizedBox(height: 8),
+            Container(
+              width: widthScreen,
+              child: GetBuilder<EditaFontesController>(builder: (_) {
                 if (editaFontesController.documentsAtivos == null) {
                   return Container(
                     height: 40,
@@ -108,68 +77,137 @@ class EditaFontes extends StatelessWidget {
                     child: MyCircularProgress(),
                   );
                 } else {
-                  if (editaFontesController.documentsNaoAtivos.length != 0) {
+                  if (editaFontesController.documentsAtivos!.length != 0) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TituloSessao(titulo: 'Fontes Não Ativas'),
+                        TituloSessao(titulo: 'Fontes Ativas'),
                         Wrap(
                           children: List<Widget>.generate(
-                              editaFontesController.documentsNaoAtivos.length,
+                              editaFontesController.documentsAtivos!.length,
                               (int index) {
-                            return itemFonte(editaFontesController
-                                .documentsNaoAtivos[index]['descricao']);
+                            return GestureDetector(
+                              onLongPress: () async {
+
+                                QuerySnapshot querySnapshot = await trazerFontesAtivas();
+
+
+
+                                querySnapshot.docs[index].reference.update(
+                                  {
+                                    'descricao': querySnapshot.docs[index]['descricao'],
+                                    'ativa': !querySnapshot.docs[index]['ativa'],
+                                  }
+                                );
+
+                                editaFontesController.atualizarDocumentosAtivos(querySnapshot.docs);
+
+                              },
+                              child: itemFonte(editaFontesController
+                                  .documentsAtivos![index]['descricao']),
+                            );
                           }),
                         ),
-                        SizedBox(height: 16),
                       ],
                     );
                   } else {
-                    return Container();
+                    return Text('Não existem fontes ativas.', style: GoogleFonts.quicksand(color: azul_principal));
                   }
                 }
-              },
+              }),
             ),
-          ),
-          Center(
-            child: Container(
-              width: widthScreen - 16,
-              color: Colors.red,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 4, top: 8, bottom: 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Icon(FontAwesomeIcons.exclamationCircle),
-                    ),
-                    Expanded(
-                      flex: 9,
-                      child: Text(
-                          'Atenção: para ver as opções da fonte (ativa/não ativa) fique segurando a opção desejada.',
-                          style: GoogleFonts.quicksand(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
-                    ),
-                  ],
+            SizedBox(height: 16),
+            Container(
+              width: widthScreen,
+              child: GetBuilder<EditaFontesController>(
+                builder: (_) {
+                  if (editaFontesController.documentsAtivos == null) {
+                    return Container(
+                      height: 40,
+                      width: 40,
+                      alignment: Alignment.center,
+                      child: MyCircularProgress(),
+                    );
+                  } else {
+                    if (editaFontesController.documentsNaoAtivos.length != 0) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TituloSessao(titulo: 'Fontes Não Ativas'),
+                          Wrap(
+                            children: List<Widget>.generate(
+                                editaFontesController.documentsNaoAtivos.length,
+                                (int index) {
+                              return GestureDetector(
+                                onLongPress: () async {
+
+                                  QuerySnapshot querySnapshot = await trazerFontesNaoAtivas();
+
+                                  querySnapshot.docs[index].reference.update(
+                                      {
+                                        'descricao': querySnapshot.docs[index]['descricao'],
+                                        'ativa': !querySnapshot.docs[index]['ativa'],
+                                      }
+                                  );
+
+                                  editaFontesController.atualizarDocumentosNaoAtivos(querySnapshot.docs);
+
+                                },
+                                child: itemFonte(editaFontesController
+                                    .documentsNaoAtivos[index]['descricao']),
+                              );
+                            }),
+                          ),
+                          SizedBox(height: 16),
+                        ],
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }
+                },
+              ),
+            ),
+            Center(
+              child: Container(
+                width: widthScreen - 16,
+                color: Colors.red,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 4, top: 8, bottom: 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Icon(FontAwesomeIcons.exclamationCircle),
+                      ),
+                      Expanded(
+                        flex: 9,
+                        child: Text(
+                            'Atenção: para trocar o status da fonte (ativa/não ativa) fique segurando a opção desejada.',
+                            style: GoogleFonts.quicksand(
+                                fontSize: 14, fontWeight: FontWeight.w600)),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          SizedBox(height: 16),
-          Center(
-            child: Container(
-              width: widthScreen - 16,
-              child: botaoContorno(
-                Text('Adicionar Nova Fonte'.toUpperCase(),
-                style: GoogleFonts.montserrat(color: Colors.green, letterSpacing: 1, fontWeight: FontWeight.bold, fontSize: 18), textAlign: TextAlign.center, ),
-                Colors.green,
-                FontAwesomeIcons.plusCircle,
-                () => print('oi'),
-                botaoMaior: true,
+            SizedBox(height: 16),
+            Center(
+              child: Container(
+                width: widthScreen - 16,
+                child: botaoContorno(
+                  Text('Adicionar Nova Fonte'.toUpperCase(),
+                  style: GoogleFonts.montserrat(color: Colors.green, letterSpacing: 1, fontWeight: FontWeight.bold, fontSize: 18), textAlign: TextAlign.center, ),
+                  Colors.green,
+                  FontAwesomeIcons.plusCircle,
+                  () => Get.dialog(AdicionaFonte()),
+                  botaoMaior: true,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:atletica_online/globals.dart' as globals;
 
 import '../colors.dart';
 
@@ -49,14 +50,25 @@ class AdicionaFonte extends StatelessWidget {
                           "descricao": descricaoController.text
                         };
 
-                        if(descricaoController.text.isNotEmpty) {
-                          CollectionReference collectionReference = FirebaseFirestore.instance.collection('financeiro').doc('fontes').collection('dados');
-                          collectionReference.doc(DateTime.now().toString()).set(dadosApp);
+                        if (descricaoController.text.isNotEmpty) {
+                          CollectionReference collectionReference =
+                              FirebaseFirestore.instance
+                                  .collection('atleticas')
+                                  .doc(globals.atletica_firebase)
+                                  .collection('financeiro')
+                                  .doc('fontes')
+                                  .collection('dados');
+                          collectionReference
+                              .doc(DateTime.now().toString())
+                              .set(dadosApp);
                           Get.back();
                           Get.snackbar(
                             '',
                             '',
-                            icon: Icon(FontAwesomeIcons.check, color: Colors.white,),
+                            icon: Icon(
+                              FontAwesomeIcons.check,
+                              color: Colors.white,
+                            ),
                             titleText: Text(
                               'Fonte salva com sucesso!',
                               style: GoogleFonts.quicksand(
@@ -79,7 +91,10 @@ class AdicionaFonte extends StatelessWidget {
                           Get.snackbar(
                             '',
                             '',
-                            icon: Icon(FontAwesomeIcons.times, color: Colors.white,),
+                            icon: Icon(
+                              FontAwesomeIcons.times,
+                              color: Colors.white,
+                            ),
                             titleText: Text(
                               'Erro ao salvar a fonte!',
                               style: GoogleFonts.quicksand(

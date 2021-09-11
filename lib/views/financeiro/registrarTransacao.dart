@@ -4,15 +4,16 @@ import 'package:atletica_online/components/myAppBar.dart';
 import 'package:atletica_online/components/tituloSessao.dart';
 import 'package:atletica_online/controllers/financeiro/financeiroController.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'graficosFinanceiro.dart';
 import '../../controllers/financeiro/transacaoController.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:atletica_online/globals.dart' as globals;
 
 class RegistrarTransacao extends StatelessWidget {
-
   final FinanceiroController financeiroController = Get.find();
 
   final TransacaoController transacaoController =
@@ -22,6 +23,8 @@ class RegistrarTransacao extends StatelessWidget {
 
   Future<QuerySnapshot> trazerFontes() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('atleticas')
+        .doc(globals.atletica_firebase)
         .collection('financeiro')
         .doc('fontes')
         .collection('dados')
@@ -30,12 +33,8 @@ class RegistrarTransacao extends StatelessWidget {
     return querySnapshot;
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-
-
     var widthScreen = MediaQuery.of(context).size.width;
     var heightScreen = MediaQuery.of(context).size.height;
     var safeArea = MediaQuery.of(context).padding.top;
@@ -198,25 +197,50 @@ class RegistrarTransacao extends StatelessWidget {
                     if (snapshot.connectionState == ConnectionState.done) {
                       List<QueryDocumentSnapshot> documents =
                           snapshot.data!.docs;
-                      return Wrap(
-                        children: List<Widget>.generate(documents.length,
-                            (int index) {
-                          return GestureDetector(
-                            onTap: () {
-                              transacaoController.atualizarFonte(documents[index].reference.id);
-                            },
-                            child: GetBuilder<TransacaoController>(
-                              builder: (_) {
-                                if (transacaoController.fonte == documents[index].reference.id) {
-                                  return itemFonteSelecionado(documents[index].data()['descricao']);
-                                } else {
-                                  return itemFonte(documents[index].data()['descricao']);
-                                }
-                              },
-                            ),
-                          );
-                        }),
-                      );
+                      return documents.length > 0
+                          ? Wrap(
+                              children: List<Widget>.generate(documents.length,
+                                  (int index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    transacaoController.atualizarFonte(
+                                        documents[index].reference.id);
+                                  },
+                                  child: GetBuilder<TransacaoController>(
+                                    builder: (_) {
+                                      if (transacaoController.fonte ==
+                                          documents[index].reference.id) {
+                                        return itemFonteSelecionado(
+                                            documents[index]
+                                                .data()['descricao']);
+                                      } else {
+                                        return itemFonte(documents[index]
+                                            .data()['descricao']);
+                                      }
+                                    },
+                                  ),
+                                );
+                              }),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 8, left: 8, top: 8),
+                              child: Column(
+                                children: [
+                                  Icon(FontAwesomeIcons.exclamation,
+                                      size: 48, color: azul_principal),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    'Adicione uma fonte financeira ativa para prosseguir!',
+                                    style: GoogleFonts.quicksand(
+                                      color: azul_principal,
+                                      fontSize: 18,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            );
                     } else {
                       return Container(
                         alignment: Alignment.center,
@@ -241,91 +265,119 @@ class RegistrarTransacao extends StatelessWidget {
                   },
                   child: InkWell(
                     onTap: () async {
+                      bool internet =
+                          await DataConnectionChecker().hasConnection;
 
-                      bool internet = await DataConnectionChecker().hasConnection;
-
-                      if(
-                        valor.text.isNotEmpty &&
-                        transacaoController.tipo != 0 &&
-                        descricao.text.isNotEmpty &&
-                        transacaoController.fonte != ''
-                      ) {
-
-
-
-                        if(internet == true) {
+                      if (valor.text.isNotEmpty &&
+                          transacaoController.tipo != 0 &&
+                          descricao.text.isNotEmpty &&
+                          transacaoController.fonte != '') {
+                        if (internet == true) {
                           if (transacaoController.tipo == 1) {
-                            var mesAtual = DateTime.now().toString().substring(5,7);
-                            var anoAtual = DateTime.now().toString().substring(0,4);
-                            Map<String,dynamic> dadosApp = {
-                              "valor": double.parse(valor.text.replaceAll(',', '.')),
+                            var mesAtual =
+                                DateTime.now().toString().substring(5, 7);
+                            var anoAtual =
+                                DateTime.now().toString().substring(0, 4);
+                            Map<String, dynamic> dadosApp = {
+                              "valor":
+                                  double.parse(valor.text.replaceAll(',', '.')),
                               "descricao": descricao.text,
                               "fonte": transacaoController.fonte,
                               "mes": mesAtual,
                               "ano": anoAtual
                             };
 
-                            CollectionReference collectionReference = FirebaseFirestore.instance.collection('financeiro').doc('recebidos').collection('dados');
-                            collectionReference.doc(DateTime.now().toString()).set(dadosApp);
-                            DocumentReference documentReference = FirebaseFirestore.instance.collection('financeiro').doc('caixa');
+                            CollectionReference collectionReference =
+                                FirebaseFirestore.instance
+                                    .collection('atleticas')
+                                    .doc(globals.atletica_firebase)
+                                    .collection('financeiro')
+                                    .doc('recebidos')
+                                    .collection('dados');
+                            collectionReference
+                                .doc(DateTime.now().toString())
+                                .set(dadosApp);
+                            DocumentReference documentReference =
+                                FirebaseFirestore.instance
+                                    .collection('atleticas')
+                                    .doc(globals.atletica_firebase)
+                                    .collection('financeiro')
+                                    .doc('caixa');
                             documentReference.get().then((value) {
-                              double valorAdd = double.parse(value['valor']) + double.parse(valor.text.replaceAll(',', '.'));
-                              Map<String,dynamic> dadosUpdate = {
+                              double valorAdd = double.parse(value['valor']) +
+                                  double.parse(valor.text.replaceAll(',', '.'));
+                              Map<String, dynamic> dadosUpdate = {
                                 "valor": valorAdd.toString(),
                               };
                               documentReference.update(dadosUpdate);
+                            });
 
-                            } );
-
-                            await Get.dialog(
-                                Aviso(titulo: 'Transação armazenada com sucesso!',
-                                    subTitulo: '',
-                                    color: Colors.green)
-                            );
+                            await Get.dialog(Aviso(
+                                titulo: 'Transação armazenada com sucesso!',
+                                subTitulo: '',
+                                color: Colors.green));
                             Get.back();
-
-
                           }
 
                           if (transacaoController.tipo == 2) {
-                            var mesAtual = DateTime.now().toString().substring(5,7);
-                            var anoAtual = DateTime.now().toString().substring(0,4);
+                            var mesAtual =
+                                DateTime.now().toString().substring(5, 7);
+                            var anoAtual =
+                                DateTime.now().toString().substring(0, 4);
 
-                            Map<String,dynamic> dadosApp = {
-                              "valor": double.parse(valor.text.replaceAll(',', '.')),
+                            Map<String, dynamic> dadosApp = {
+                              "valor":
+                                  double.parse(valor.text.replaceAll(',', '.')),
                               "descricao": descricao.text,
                               "fonte": transacaoController.fonte,
                               "mes": mesAtual,
                               "ano": anoAtual,
                             };
 
-                            CollectionReference collectionReference = FirebaseFirestore.instance.collection('financeiro').doc('gastos').collection('dados');
-                            collectionReference.doc(DateTime.now().toString()).set(dadosApp);
-                            DocumentReference documentReference = FirebaseFirestore.instance.collection('financeiro').doc('caixa');
+                            CollectionReference collectionReference =
+                                FirebaseFirestore.instance
+                                    .collection('atleticas')
+                                    .doc(globals.atletica_firebase)
+                                    .collection('financeiro')
+                                    .doc('gastos')
+                                    .collection('dados');
+                            collectionReference
+                                .doc(DateTime.now().toString())
+                                .set(dadosApp);
+                            DocumentReference documentReference =
+                                FirebaseFirestore.instance
+                                    .collection('atleticas')
+                                    .doc(globals.atletica_firebase)
+                                    .collection('financeiro')
+                                    .doc('caixa');
                             documentReference.get().then((value) {
-                              double valorSub = double.parse(value['valor']) - double.parse(valor.text.replaceAll(',', '.'));
-                              Map<String,dynamic> dadosUpdate = {
+                              double valorSub = double.parse(value['valor']) -
+                                  double.parse(valor.text.replaceAll(',', '.'));
+                              Map<String, dynamic> dadosUpdate = {
                                 "valor": valorSub.toString(),
                               };
                               documentReference.update(dadosUpdate);
-
                             });
 
-                            await Get.dialog(Aviso(titulo: 'Transação armazenada com sucesso!',
+                            await Get.dialog(Aviso(
+                                titulo: 'Transação armazenada com sucesso!',
                                 subTitulo: '',
                                 color: Colors.green));
                             Get.back();
-
                           }
                         } else {
-                          Get.dialog(Aviso(titulo: 'Não há conexão com a Internet',
-                              subTitulo: 'Confira a disponibilidade em seu dispositivo.',
+                          Get.dialog(Aviso(
+                              titulo: 'Não há conexão com a Internet',
+                              subTitulo:
+                                  'Confira a disponibilidade em seu dispositivo.',
                               color: Colors.red));
                         }
-
                       } else {
-                        Get.dialog(Aviso(titulo: 'Existem um ou mais campos obrigatórios não preenchidos',
-                            subTitulo: 'Confira se você colocou o valor, tipo, descrição e a fonte do dinheiro.',
+                        Get.dialog(Aviso(
+                            titulo:
+                                'Existem um ou mais campos obrigatórios não preenchidos',
+                            subTitulo:
+                                'Confira se você colocou o valor, tipo, descrição e a fonte do dinheiro.',
                             color: Colors.red));
                       }
                     },
@@ -379,7 +431,8 @@ class RegistrarTransacao extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             titulo,
-            style: GoogleFonts.quicksand(fontSize: 18, fontWeight: FontWeight.bold),
+            style: GoogleFonts.quicksand(
+                fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -449,5 +502,4 @@ class RegistrarTransacao extends StatelessWidget {
       ),
     );
   }
-
 }

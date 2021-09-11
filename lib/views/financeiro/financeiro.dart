@@ -11,9 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:atletica_online/globals.dart' as globals;
 
 class Financeiro extends StatelessWidget {
-  final FinanceiroController financeiroController = Get.put(FinanceiroController());
+  final FinanceiroController financeiroController =
+      Get.put(FinanceiroController());
 
   final double heightScreen;
   final double widthScreen;
@@ -28,6 +30,8 @@ class Financeiro extends StatelessWidget {
 
   Future<DocumentSnapshot> trazerValorCaixa() async {
     return FirebaseFirestore.instance
+        .collection('atleticas')
+        .doc(globals.atletica_firebase)
         .collection('financeiro')
         .doc('caixa')
         .get();
@@ -35,6 +39,8 @@ class Financeiro extends StatelessWidget {
 
   Future<QuerySnapshot> trazerGastos() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('atleticas')
+        .doc(globals.atletica_firebase)
         .collection('financeiro')
         .doc('gastos')
         .collection('dados')
@@ -44,6 +50,8 @@ class Financeiro extends StatelessWidget {
 
   Future<QuerySnapshot> trazerRecebidos() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('atleticas')
+        .doc(globals.atletica_firebase)
         .collection('financeiro')
         .doc('recebidos')
         .collection('dados')
@@ -56,6 +64,8 @@ class Financeiro extends StatelessWidget {
     String anoAtual = DateTime.now().toString().substring(0, 4);
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('atleticas')
+        .doc(globals.atletica_firebase)
         .collection('financeiro')
         .doc('recebidos')
         .collection('dados')
@@ -70,6 +80,8 @@ class Financeiro extends StatelessWidget {
     String anoAtual = DateTime.now().toString().substring(0, 4);
 
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('atleticas')
+        .doc(globals.atletica_firebase)
         .collection('financeiro')
         .doc('gastos')
         .collection('dados')
@@ -81,76 +93,87 @@ class Financeiro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     FirebaseFirestore.instance
+        .collection('atleticas')
+        .doc(globals.atletica_firebase)
         .collection('financeiro')
         .doc('caixa')
         .snapshots()
         .listen((event) {
-
       String valor = event['valor'];
       double valorDouble = double.parse(valor);
       financeiroController.atualizarCaixaAtual(valorDouble);
 
       FirebaseFirestore.instance
+          .collection('atleticas')
+          .doc(globals.atletica_firebase)
           .collection('financeiro')
           .doc('recebidos')
           .collection('dados')
-          .get().then((value) {
-        financeiroController.atualizarDocumentsRecebidos(List.from(value.docs.reversed));
+          .get()
+          .then((value) {
+        financeiroController
+            .atualizarDocumentsRecebidos(List.from(value.docs.reversed));
       });
 
-      var mesAtual = DateTime.now().toString().substring(5,7);
-      var anoAtual = DateTime.now().toString().substring(0,4);
+      var mesAtual = DateTime.now().toString().substring(5, 7);
+      var anoAtual = DateTime.now().toString().substring(0, 4);
 
       FirebaseFirestore.instance
+          .collection('atleticas')
+          .doc(globals.atletica_firebase)
           .collection('financeiro')
           .doc('gastos')
           .collection('dados')
-          .get().then((value) {
-        financeiroController.atualizarDocumentsGastos(List.from(value.docs.reversed));
+          .get()
+          .then((value) {
+        financeiroController
+            .atualizarDocumentsGastos(List.from(value.docs.reversed));
       });
 
       FirebaseFirestore.instance
+          .collection('atleticas')
+          .doc(globals.atletica_firebase)
           .collection('financeiro')
           .doc('recebidos')
           .collection('dados')
           .where("mes", isEqualTo: mesAtual)
           .where("ano", isEqualTo: anoAtual)
-          .get().then((value) {
+          .get()
+          .then((value) {
         QuerySnapshot querySnapshot = value;
         List<QueryDocumentSnapshot> documentsRecebidosMes = [];
         documentsRecebidosMes = querySnapshot.docs;
 
         double total = 0;
-        for (var n = 0 ; n < documentsRecebidosMes.length; n++) {
+        for (var n = 0; n < documentsRecebidosMes.length; n++) {
           total = total + documentsRecebidosMes[n]['valor'];
         }
 
         financeiroController.atualizarRecebidosMes(total);
-
       });
 
       FirebaseFirestore.instance
+          .collection('atleticas')
+          .doc(globals.atletica_firebase)
           .collection('financeiro')
           .doc('gastos')
           .collection('dados')
           .where("mes", isEqualTo: mesAtual)
           .where("ano", isEqualTo: anoAtual)
-          .get().then((value) {
+          .get()
+          .then((value) {
         QuerySnapshot querySnapshot = value;
         List<QueryDocumentSnapshot> documentsGastosMes = [];
         documentsGastosMes = querySnapshot.docs;
 
         double total = 0;
-        for (var n = 0 ; n < documentsGastosMes.length; n++) {
+        for (var n = 0; n < documentsGastosMes.length; n++) {
           total = total + documentsGastosMes[n]['valor'];
         }
 
         financeiroController.atualizarGastosMes(total);
-
       });
-
     });
 
     List<QueryDocumentSnapshot> documentsRecebidosMes = [];
@@ -194,7 +217,9 @@ class Financeiro extends StatelessWidget {
                               'R\$ ' +
                                   financeiroController.caixa_atual
                                       .toPrecision(2)
-                                      .toString(),
+                                      .toString()
+                                      .replaceAll(".", ',')
+                              ,
                               style: GoogleFonts.montserrat(
                                 fontSize: 40,
                                 color: Colors.white,
@@ -259,24 +284,37 @@ class Financeiro extends StatelessWidget {
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.done) {
-                                            documentsRecebidosMes = snapshot.data!.docs;
+                                            documentsRecebidosMes =
+                                                snapshot.data!.docs;
                                             double valor = 0;
-                                            for (var n = 0 ; n < documentsRecebidosMes.length; n++) {
-                                              valor = valor + documentsRecebidosMes[n]['valor'];
+                                            for (var n = 0;
+                                                n <
+                                                    documentsRecebidosMes
+                                                        .length;
+                                                n++) {
+                                              valor = valor +
+                                                  documentsRecebidosMes[n]
+                                                      ['valor'];
                                             }
-                                            financeiroController.atualizarRecebidosMes(valor);
+                                            financeiroController
+                                                .atualizarRecebidosMes(valor);
 
-                                            return GetBuilder<FinanceiroController>(
+                                            return GetBuilder<
+                                                FinanceiroController>(
                                               builder: (_) {
                                                 return Text(
-                                                  'R\$ '
-                                                      + financeiroController.recebidos_mes
-                                                      .toPrecision(2)
-                                                      .toString(),
+                                                  'R\$ ' +
+                                                      financeiroController
+                                                          .recebidos_mes
+                                                          .toPrecision(2)
+                                                          .toString()
+                                                          .replaceAll(".", ',')
+                                                  ,
                                                   style: GoogleFonts.quicksand(
                                                       fontSize: 20,
                                                       color: Colors.white,
-                                                      fontWeight: FontWeight.bold),
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 );
                                               },
                                             );
@@ -330,21 +368,32 @@ class Financeiro extends StatelessWidget {
                                                 snapshot.data!.docs;
 
                                             double valor = 0;
-                                            for (var n = 0 ; n < documentsGastosMes.length; n++) {
-                                              valor = valor + documentsGastosMes[n]['valor'];
+                                            for (var n = 0;
+                                                n < documentsGastosMes.length;
+                                                n++) {
+                                              valor = valor +
+                                                  documentsGastosMes[n]
+                                                      ['valor'];
                                             }
-                                            financeiroController.atualizarGastosMes(valor);
+                                            financeiroController
+                                                .atualizarGastosMes(valor);
 
-                                            return GetBuilder<FinanceiroController>(builder: (_) {
+                                            return GetBuilder<
+                                                    FinanceiroController>(
+                                                builder: (_) {
                                               return Text(
                                                 'R\$ ' +
-                                                    financeiroController.gastos_mes
+                                                    financeiroController
+                                                        .gastos_mes
                                                         .toPrecision(2)
-                                                        .toString(),
+                                                        .toString()
+                                                        .replaceAll(".", ',')
+                                                ,
                                                 style: GoogleFonts.quicksand(
                                                     fontSize: 20,
                                                     color: Colors.white,
-                                                    fontWeight: FontWeight.bold),
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               );
                                             });
                                           } else {
@@ -390,14 +439,16 @@ class Financeiro extends StatelessWidget {
                       FutureBuilder<QuerySnapshot>(
                         future: trazerRecebidos(),
                         builder: (context, snapshot) {
-
-
-                          if (snapshot.connectionState == ConnectionState.done) {
-                            financeiroController.atualizarDocumentsRecebidos(List.from(snapshot.data!.docs.reversed));
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            financeiroController.atualizarDocumentsRecebidos(
+                                List.from(snapshot.data!.docs.reversed));
 
                             return GetBuilder<FinanceiroController>(
                               builder: (_) {
-                                if (financeiroController.documentsRecebidos.length >= 5) {
+                                if (financeiroController
+                                        .documentsRecebidos.length >=
+                                    5) {
                                   return ListView.builder(
                                     padding: EdgeInsets.all(0),
                                     shrinkWrap: true,
@@ -407,9 +458,12 @@ class Financeiro extends StatelessWidget {
                                       return Column(
                                         children: [
                                           itemRecebidos(
-                                              financeiroController.documentsRecebidos[index]['valor'],
-                                              financeiroController.documentsRecebidos[index]['descricao']
-                                          ),
+                                              financeiroController
+                                                      .documentsRecebidos[index]
+                                                  ['valor'],
+                                              financeiroController
+                                                      .documentsRecebidos[index]
+                                                  ['descricao']),
                                           SizedBox(height: 4),
                                           index != 4
                                               ? linhaDivisoria()
@@ -421,21 +475,38 @@ class Financeiro extends StatelessWidget {
                                       );
                                     },
                                   );
-                                } else if (financeiroController.documentsRecebidos.length > 0) {
+                                } else if (financeiroController
+                                        .documentsRecebidos.length >
+                                    0) {
                                   return ListView.builder(
                                     padding: EdgeInsets.all(0),
                                     shrinkWrap: true,
-                                    itemCount: financeiroController.documentsRecebidos.length,
+                                    itemCount: financeiroController
+                                        .documentsRecebidos.length,
                                     physics: NeverScrollableScrollPhysics(),
                                     itemBuilder: (context, index) {
                                       return Column(
                                         children: [
-                                          itemRecebidos(financeiroController.documentsRecebidos[index]['valor'], financeiroController.documentsRecebidos[index]['descricao']),
+                                          itemRecebidos(
+                                              financeiroController
+                                                      .documentsRecebidos[index]
+                                                  ['valor'],
+                                              financeiroController
+                                                      .documentsRecebidos[index]
+                                                  ['descricao']),
                                           SizedBox(height: 4),
-                                          index != financeiroController.documentsRecebidos.length - 1
+                                          index !=
+                                                  financeiroController
+                                                          .documentsRecebidos
+                                                          .length -
+                                                      1
                                               ? linhaDivisoria()
                                               : Container(),
-                                          index != financeiroController.documentsRecebidos.length - 1
+                                          index !=
+                                                  financeiroController
+                                                          .documentsRecebidos
+                                                          .length -
+                                                      1
                                               ? SizedBox(height: 4)
                                               : Container()
                                         ],
@@ -443,7 +514,16 @@ class Financeiro extends StatelessWidget {
                                     },
                                   );
                                 } else {
-                                  return Text('sem nada');
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 32, left: 8, top: 32),
+                                    child: Column(
+                                      children: [
+                                        Icon(FontAwesomeIcons.exclamation, size: 48, color: azul_principal),
+                                        SizedBox(height: 8),
+                                        Text('Nada foi encontrado.', style: GoogleFonts.quicksand(color: azul_principal, fontSize: 18),),
+                                      ],
+                                    ),
+                                  );
                                 }
                               },
                             );
@@ -455,14 +535,14 @@ class Financeiro extends StatelessWidget {
                               child: MyCircularProgress(),
                             );
                           }
-
-
                         },
                       ),
-                      InkWell(
+                      financeiroController.documentsRecebidos.length > 0 ? InkWell(
                         onTap: () {
                           Get.to(() => MaisFinanceiro(
-                              tipoTela: 1, documents: financeiroController.documentsRecebidos));
+                              tipoTela: 1,
+                              documents:
+                                  financeiroController.documentsRecebidos));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -485,7 +565,7 @@ class Financeiro extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ),
+                      ) : Container(),
                     ],
                   ),
                 ),
@@ -505,12 +585,15 @@ class Financeiro extends StatelessWidget {
                       FutureBuilder<QuerySnapshot>(
                         future: trazerGastos(),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.done) {
-                            financeiroController.atualizarDocumentsGastos(List.from(snapshot.data!.docs.reversed));
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            financeiroController.atualizarDocumentsGastos(
+                                List.from(snapshot.data!.docs.reversed));
 
-
-                            return GetBuilder<FinanceiroController>(builder: (_) {
-                              if (financeiroController.documentsGastos.length >= 5) {
+                            return GetBuilder<FinanceiroController>(
+                                builder: (_) {
+                              if (financeiroController.documentsGastos.length >=
+                                  5) {
                                 return ListView.builder(
                                   padding: EdgeInsets.all(0),
                                   shrinkWrap: true,
@@ -520,8 +603,12 @@ class Financeiro extends StatelessWidget {
                                     return Column(
                                       children: [
                                         itemGastos(
-                                            financeiroController.documentsGastos[index]['valor'],
-                                            financeiroController.documentsGastos[index]['descricao']),
+                                            financeiroController
+                                                    .documentsGastos[index]
+                                                ['valor'],
+                                            financeiroController
+                                                    .documentsGastos[index]
+                                                ['descricao']),
                                         SizedBox(height: 4),
                                         index != 4
                                             ? linhaDivisoria()
@@ -533,23 +620,38 @@ class Financeiro extends StatelessWidget {
                                     );
                                   },
                                 );
-                              } else if (financeiroController.documentsGastos.length > 0) {
+                              } else if (financeiroController
+                                      .documentsGastos.length >
+                                  0) {
                                 return ListView.builder(
                                   padding: EdgeInsets.all(0),
                                   shrinkWrap: true,
-                                  itemCount: financeiroController.documentsGastos.length,
+                                  itemCount: financeiroController
+                                      .documentsGastos.length,
                                   physics: NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index) {
                                     return Column(
                                       children: [
                                         itemGastos(
-                                            financeiroController.documentsGastos[index]['valor'],
-                                            financeiroController.documentsGastos[index]['descricao']),
+                                            financeiroController
+                                                    .documentsGastos[index]
+                                                ['valor'],
+                                            financeiroController
+                                                    .documentsGastos[index]
+                                                ['descricao']),
                                         SizedBox(height: 4),
-                                        index != financeiroController.documentsGastos.length - 1
+                                        index !=
+                                                financeiroController
+                                                        .documentsGastos
+                                                        .length -
+                                                    1
                                             ? linhaDivisoria()
                                             : Container(),
-                                        index != financeiroController.documentsGastos.length - 1
+                                        index !=
+                                                financeiroController
+                                                        .documentsGastos
+                                                        .length -
+                                                    1
                                             ? SizedBox(height: 4)
                                             : Container()
                                       ],
@@ -557,7 +659,16 @@ class Financeiro extends StatelessWidget {
                                   },
                                 );
                               } else {
-                                return Text('sem nada');
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 32, left: 8, top: 32),
+                                  child: Column(
+                                    children: [
+                                      Icon(FontAwesomeIcons.exclamation, size: 48, color: azul_principal),
+                                      SizedBox(height: 8),
+                                      Text('Nada foi encontrado.', style: GoogleFonts.quicksand(color: azul_principal, fontSize: 18),),
+                                    ],
+                                  ),
+                                );
                               }
                             });
                           } else {
@@ -570,10 +681,11 @@ class Financeiro extends StatelessWidget {
                           }
                         },
                       ),
-                      InkWell(
+                      financeiroController.documentsGastos.length > 0 ? InkWell(
                         onTap: () {
                           Get.to(() => MaisFinanceiro(
-                              tipoTela: 2, documents: financeiroController.documentsGastos));
+                              tipoTela: 2,
+                              documents: financeiroController.documentsGastos));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -596,7 +708,7 @@ class Financeiro extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ),
+                      ) : Container(),
                     ],
                   ),
                 ),
@@ -612,80 +724,126 @@ class Financeiro extends StatelessWidget {
                   color: Colors.white,
                   child: GetBuilder<FinanceiroController>(
                     builder: (_) {
-                      Map<String,double> dicionario_recebidos = {};
-                      Map<String,double> dicionario_gastos = {};
-                      Map<String,double> dicionario_resultado = {};
+                      Map<String, double> dicionario_recebidos = {};
+                      Map<String, double> dicionario_gastos = {};
+                      Map<String, double> dicionario_resultado = {};
 
-                      for(int i = 0; i < financeiroController.documentsRecebidos.length ; i++){
-                        if(dicionario_recebidos.containsKey(financeiroController.documentsRecebidos[i]['fonte'])) {
-                          dicionario_recebidos[financeiroController.documentsRecebidos[i]['fonte']] = (dicionario_recebidos[financeiroController.documentsRecebidos[i]['fonte']]! + financeiroController.documentsRecebidos[i]['valor']);
+                      for (int i = 0;
+                          i < financeiroController.documentsRecebidos.length;
+                          i++) {
+                        if (dicionario_recebidos.containsKey(
+                            financeiroController.documentsRecebidos[i]
+                                ['fonte'])) {
+                          dicionario_recebidos[financeiroController
+                                  .documentsRecebidos[i]['fonte']] =
+                              (dicionario_recebidos[financeiroController
+                                      .documentsRecebidos[i]['fonte']]! +
+                                  financeiroController.documentsRecebidos[i]
+                                      ['valor']);
                         } else {
-                          dicionario_recebidos[financeiroController.documentsRecebidos[i]['fonte']] = financeiroController.documentsRecebidos[i]['valor'];
+                          dicionario_recebidos[financeiroController
+                                  .documentsRecebidos[i]['fonte']] =
+                              financeiroController.documentsRecebidos[i]
+                                  ['valor'];
                         }
                       }
 
-                      for(int i=0; i < financeiroController.documentsGastos.length ; i++) {
-                        if(dicionario_gastos.containsKey(financeiroController.documentsGastos[i]['fonte'])) {
-                          dicionario_gastos[financeiroController.documentsGastos[i]['fonte']] = (dicionario_gastos[financeiroController.documentsGastos[i]['fonte']]! + financeiroController.documentsGastos[i]['valor']);
+                      for (int i = 0;
+                          i < financeiroController.documentsGastos.length;
+                          i++) {
+                        if (dicionario_gastos.containsKey(
+                            financeiroController.documentsGastos[i]['fonte'])) {
+                          dicionario_gastos[financeiroController
+                                  .documentsGastos[i]
+                              ['fonte']] = (dicionario_gastos[
+                                  financeiroController.documentsGastos[i]
+                                      ['fonte']]! +
+                              financeiroController.documentsGastos[i]['valor']);
                         } else {
-                          dicionario_gastos[financeiroController.documentsGastos[i]['fonte']] = financeiroController.documentsGastos[i]['valor'];
+                          dicionario_gastos[financeiroController
+                                  .documentsGastos[i]['fonte']] =
+                              financeiroController.documentsGastos[i]['valor'];
                         }
                       }
 
                       dicionario_recebidos.forEach((key, value) {
-
-                        if(dicionario_gastos.containsKey(key)){
-                          dicionario_resultado[key] = dicionario_recebidos[key]! - dicionario_gastos[key]!;
+                        if (dicionario_gastos.containsKey(key)) {
+                          dicionario_resultado[key] =
+                              dicionario_recebidos[key]! -
+                                  dicionario_gastos[key]!;
                         } else {
-                          dicionario_resultado[key] = dicionario_recebidos[key]!;
+                          dicionario_resultado[key] =
+                              dicionario_recebidos[key]!;
                         }
-
                       });
 
                       dicionario_gastos.forEach((key, value) {
-
                         if (!dicionario_recebidos.containsKey(key)) {
-                          dicionario_resultado[key] = dicionario_gastos[key]! * -1;
+                          dicionario_resultado[key] =
+                              dicionario_gastos[key]! * -1;
                         }
-
                       });
 
-
-
-
                       return FutureBuilder<QuerySnapshot>(
-                        future: FirebaseFirestore.instance.collection('financeiro').doc('fontes').collection('dados').where('ativa', isEqualTo: true).get(),
+                        future: FirebaseFirestore.instance
+                            .collection('atleticas')
+                            .doc(globals.atletica_firebase)
+                            .collection('financeiro')
+                            .doc('fontes')
+                            .collection('dados')
+                            .where('ativa', isEqualTo: true)
+                            .get(),
                         builder: (context, snapshot) {
-
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
                             if (snapshot.hasData) {
-                              List<QueryDocumentSnapshot> fontes = snapshot.data!.docs;
+                              List<QueryDocumentSnapshot> fontes =
+                                  snapshot.data!.docs;
 
-
-                              return Column(
-                                children: List.generate(fontes.length, (int index) {
-
-                                  // valor = dicionario_resultado[fontes[index].id]
-                                  // titulo = fontes[index]['descricao']
-
-                                  return Column(
+                              if (fontes.length == 0) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 32, left: 8, top: 32),
+                                  child: Column(
                                     children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 4),
-                                        child: itemFonte(dicionario_resultado[fontes[index].id] == null ? '0,0' : dicionario_resultado[fontes[index].id], fontes[index]['descricao']),
-                                      ),
-                                      index != fontes.length - 1 ? linhaDivisoria() : Container(),
+                                      Icon(FontAwesomeIcons.exclamation, size: 48, color: azul_principal),
+                                      SizedBox(height: 8),
+                                      Text('Não existem fontes ativas.', style: GoogleFonts.quicksand(color: azul_principal, fontSize: 18),),
                                     ],
-                                  );
-                                }),
-                              );
-                              
-                              return Text('ok');
+                                  ),
+                                );
+                              } else {
+                                return Column(
+                                  children:
+                                  List.generate(fontes.length, (int index) {
+                                    // valor = dicionario_resultado[fontes[index].id]
+                                    // titulo = fontes[index]['descricao']
+
+                                    return Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 4),
+                                          child: itemFonte(
+                                              dicionario_resultado[
+                                              fontes[index].id] ==
+                                                  null
+                                                  ? '0,0'
+                                                  : dicionario_resultado[
+                                              fontes[index].id],
+                                              fontes[index]['descricao']),
+                                        ),
+                                        index != fontes.length - 1
+                                            ? linhaDivisoria()
+                                            : Container(),
+                                      ],
+                                    );
+                                  }),
+                                );
+                              }
+
                             } else {
                               return Text('erro na hora de trazer as fontes');
                             }
-
                           } else {
                             return Container(
                               height: 40,
@@ -694,9 +852,6 @@ class Financeiro extends StatelessWidget {
                               child: MyCircularProgressBranco(),
                             );
                           }
-
-
-
                         },
                       );
                     },
@@ -764,7 +919,6 @@ class Financeiro extends StatelessWidget {
   }
 
   Row itemRecebidos(double valor, String titulo) {
-
     return Row(
       children: [
         Padding(
@@ -809,8 +963,11 @@ class Financeiro extends StatelessWidget {
             alignment: Alignment.center,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Text('R\$ ' + valor.toString().replaceAll(".", ','),
-                  style: GoogleFonts.montserrat(fontSize: 16, color: Colors.white), textAlign: TextAlign.center,
+              child: Text(
+                'R\$ ' + valor.toString().replaceAll(".", ','),
+                style:
+                    GoogleFonts.montserrat(fontSize: 16, color: Colors.white),
+                textAlign: TextAlign.center,
               ),
             ),
           ),

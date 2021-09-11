@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:atletica_online/globals.dart' as globals;
 
 class EditaFontes extends StatelessWidget {
   final EditaFontesController editaFontesController =
@@ -17,6 +18,8 @@ class EditaFontes extends StatelessWidget {
 
   Future<QuerySnapshot> trazerFontesAtivas() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('atleticas')
+        .doc(globals.atletica_firebase)
         .collection('financeiro')
         .doc('fontes')
         .collection('dados')
@@ -27,6 +30,8 @@ class EditaFontes extends StatelessWidget {
 
   Future<QuerySnapshot> trazerFontesNaoAtivas() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('atleticas')
+        .doc(globals.atletica_firebase)
         .collection('financeiro')
         .doc('fontes')
         .collection('dados')
@@ -38,6 +43,8 @@ class EditaFontes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FirebaseFirestore.instance
+        .collection('atleticas')
+        .doc(globals.atletica_firebase)
         .collection('financeiro')
         .doc('fontes')
         .collection('dados')
@@ -111,7 +118,17 @@ class EditaFontes extends StatelessWidget {
                       ],
                     );
                   } else {
-                    return Text('Não existem fontes ativas.', style: GoogleFonts.quicksand(color: azul_principal));
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 32, left: 8),
+                      child: Column(
+                        children: [
+                          SizedBox(height: 8),
+                          Icon(FontAwesomeIcons.exclamation, size: 48, color: azul_principal),
+                          SizedBox(height: 8),
+                          Text('Não existem fontes ativas.', style: GoogleFonts.quicksand(color: azul_principal, fontSize: 18),),
+                        ],
+                      ),
+                    );
                   }
                 }
               }),

@@ -14,6 +14,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:atletica_online/components/colors.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:atletica_online/globals.dart' as globals;
 
 import 'controllers/menuController.dart';
 
@@ -72,6 +73,10 @@ class Home extends StatelessWidget {
                 atletica == '' || atletica == null? menuController.atualizarTemAtletica(false):menuController.atualizarTemAtletica(true);
 
                 if(menuController.temAtletica) {
+
+                  globals.atletica_firebase = atletica;
+
+
                   return Scaffold(
                     body: Container(
                       width: widthScreen,

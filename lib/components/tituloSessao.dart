@@ -16,7 +16,7 @@ class TituloSessao extends StatelessWidget {
       child: Text(
         titulo.toUpperCase(),
         style: GoogleFonts.raleway(
-          color: azul_principal,
+          color: cor_do_app,
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),

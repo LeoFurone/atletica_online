@@ -8,7 +8,7 @@ import 'package:atletica_online/globals.dart' as globals;
 
 import '../colors.dart';
 
-class AdicionaFonte extends StatelessWidget {
+class AdicionaTag extends StatelessWidget {
   final TextEditingController descricaoController = TextEditingController();
 
   @override
@@ -39,15 +39,14 @@ class AdicionaFonte extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(height: 16),
-                    TituloSessao(titulo: 'Descrição'),
+                    TituloSessao(titulo: 'Adicionar Tag'),
                     Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8),
                         child: myTextField(descricaoController)),
                     GestureDetector(
                       onTap: () {
                         Map<String, dynamic> dadosApp = {
-                          "ativa": true,
-                          "descricao": descricaoController.text
+                          "titulo": descricaoController.text
                         };
 
                         if (descricaoController.text.isNotEmpty) {
@@ -55,9 +54,8 @@ class AdicionaFonte extends StatelessWidget {
                               FirebaseFirestore.instance
                                   .collection('atleticas')
                                   .doc(globals.atletica_firebase)
-                                  .collection('financeiro')
-                                  .doc('fontes')
-                                  .collection('dados');
+                                  .collection('tags_atividades');
+
                           collectionReference
                               .doc(DateTime.now().toString())
                               .set(dadosApp);
@@ -70,7 +68,7 @@ class AdicionaFonte extends StatelessWidget {
                               color: Colors.white,
                             ),
                             titleText: Text(
-                              'Fonte salva com sucesso!',
+                              'Tag salva com sucesso!',
                               style: GoogleFonts.quicksand(
                                 fontSize: 18,
                                 color: Colors.white,
@@ -78,7 +76,7 @@ class AdicionaFonte extends StatelessWidget {
                               ),
                             ),
                             messageText: Text(
-                              'Sua fonte já está disponível para uso.',
+                              'Sua tag já está disponível para uso.',
                               style: GoogleFonts.quicksand(
                                 fontSize: 14,
                                 color: Colors.white,
@@ -96,7 +94,7 @@ class AdicionaFonte extends StatelessWidget {
                               color: Colors.white,
                             ),
                             titleText: Text(
-                              'Erro ao salvar a fonte!',
+                              'Erro ao salvar a Tag!',
                               style: GoogleFonts.quicksand(
                                 fontSize: 18,
                                 color: Colors.white,
@@ -104,7 +102,7 @@ class AdicionaFonte extends StatelessWidget {
                               ),
                             ),
                             messageText: Text(
-                              'Coloque uma descrição válida.',
+                              'Coloque uma Tag válida.',
                               style: GoogleFonts.quicksand(
                                 fontSize: 14,
                                 color: Colors.white,

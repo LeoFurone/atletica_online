@@ -1,5 +1,7 @@
+import 'package:atletica_online/views/atividades/criaAtividade.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OpcoesTarefas extends StatefulWidget {
@@ -39,19 +41,25 @@ class _OpcoesTarefasState extends State<OpcoesTarefas> {
                 ),
                 child: Column(
                   children: [
-                    Container(
-                      height: 39.75,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Row(
-                          children: [
-                            Icon(FontAwesomeIcons.book, size: 20),
-                            SizedBox(width: 8),
-                            Text(
-                              'Alguma opção aqui',
-                              style: GoogleFonts.montserrat(),
-                            ),
-                          ],
+                    InkWell(
+                      onTap: () {
+                        Get.back();
+                        Get.to(() => CriaAtividade());
+                      },
+                      child: Container(
+                        height: 39.75,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Row(
+                            children: [
+                              Icon(FontAwesomeIcons.book, size: 20),
+                              SizedBox(width: 8),
+                              Text(
+                                'Adicionar tarefa',
+                                style: GoogleFonts.montserrat(),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -65,7 +73,7 @@ class _OpcoesTarefasState extends State<OpcoesTarefas> {
                             Icon(FontAwesomeIcons.book, size: 20),
                             SizedBox(width: 8),
                             Text(
-                              'Alguma opção aqui',
+                              'Adicionar reunião',
                               style: GoogleFonts.montserrat(),
                             ),
                           ],

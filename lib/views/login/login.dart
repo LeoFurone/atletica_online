@@ -1,3 +1,4 @@
+import 'package:atletica_online/components/colors.dart';
 import 'package:atletica_online/controllers/loginController.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class Login extends StatelessWidget {
                 Container(
                   width: widthScreen,
                   height: safeArea,
-                  color: Colors.black,
+                  color: cor_do_app,
                 ),
                 SizedBox(height: 16),
                 Padding(
@@ -149,7 +150,7 @@ class Login extends StatelessWidget {
                             width: widthScreen - 16,
                             height: 50,
                             decoration: BoxDecoration(
-                              color: Colors.black,
+                              color: cor_do_app,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             alignment: Alignment.center,
@@ -196,7 +197,7 @@ class Login extends StatelessWidget {
                       height: 50,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(width: 3)),
+                          border: Border.all(width: 3, color: cor_do_app)),
                       alignment: Alignment.center,
                       child: Text(
                         'SOLICITAR INCLUSÃO DE ATLÉTICA',

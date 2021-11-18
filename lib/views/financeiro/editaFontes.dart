@@ -123,9 +123,9 @@ class EditaFontes extends StatelessWidget {
                       child: Column(
                         children: [
                           SizedBox(height: 8),
-                          Icon(FontAwesomeIcons.exclamation, size: 48, color: azul_principal),
+                          Icon(FontAwesomeIcons.exclamation, size: 48, color: cor_do_app),
                           SizedBox(height: 8),
-                          Text('Não existem fontes ativas.', style: GoogleFonts.quicksand(color: azul_principal, fontSize: 18),),
+                          Text('Não existem fontes ativas.', style: GoogleFonts.quicksand(color: cor_do_app, fontSize: 18),),
                         ],
                       ),
                     );

@@ -136,7 +136,7 @@ class Opcoes extends StatelessWidget {
                             style: GoogleFonts.quicksand(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
-                                color: azul_principal
+                                color: cor_do_app
                             ),
                           ),
                           Text(
@@ -171,7 +171,7 @@ class Opcoes extends StatelessWidget {
                           style: GoogleFonts.quicksand(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
-                              color: azul_principal
+                              color: cor_do_app
                           ),
                         ),
                         Text(
@@ -205,7 +205,7 @@ class Opcoes extends StatelessWidget {
                           style: GoogleFonts.quicksand(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
-                              color: azul_principal
+                              color: cor_do_app
                           ),
                         ),
                         Text(
@@ -239,7 +239,7 @@ class Opcoes extends StatelessWidget {
                           style: GoogleFonts.quicksand(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
-                              color: azul_principal
+                              color: cor_do_app
                           ),
                         ),
                         Text(

@@ -4,7 +4,6 @@ import 'package:atletica_online/components/myCircularProgress.dart';
 import 'package:atletica_online/components/myCircularProgressBranco.dart';
 import 'package:atletica_online/components/tituloSessao.dart';
 import 'package:atletica_online/controllers/financeiro/financeiroController.dart';
-import 'graficosFinanceiro.dart';
 import 'package:atletica_online/views/financeiro/maisFinanceiro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -174,6 +173,7 @@ class Financeiro extends StatelessWidget {
 
         financeiroController.atualizarGastosMes(total);
       });
+
     });
 
     List<QueryDocumentSnapshot> documentsRecebidosMes = [];
@@ -188,11 +188,11 @@ class Financeiro extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(height: safeArea, color: azul_principal),
+              Container(height: safeArea, color: cor_do_app),
               Container(
                 width: widthScreen,
                 decoration: BoxDecoration(
-                    color: azul_principal,
+                    color: cor_do_app,
                     borderRadius:
                         BorderRadius.vertical(bottom: Radius.circular(30))),
                 child: Column(
@@ -518,9 +518,9 @@ class Financeiro extends StatelessWidget {
                                     padding: const EdgeInsets.only(bottom: 32, left: 8, top: 32),
                                     child: Column(
                                       children: [
-                                        Icon(FontAwesomeIcons.exclamation, size: 48, color: azul_principal),
+                                        Icon(FontAwesomeIcons.exclamation, size: 48, color: cor_do_app),
                                         SizedBox(height: 8),
-                                        Text('Nada foi encontrado.', style: GoogleFonts.quicksand(color: azul_principal, fontSize: 18),),
+                                        Text('Nada foi encontrado.', style: GoogleFonts.quicksand(color: cor_do_app, fontSize: 18),),
                                       ],
                                     ),
                                   );
@@ -537,35 +537,37 @@ class Financeiro extends StatelessWidget {
                           }
                         },
                       ),
-                      financeiroController.documentsRecebidos.length > 0 ? InkWell(
-                        onTap: () {
-                          Get.to(() => MaisFinanceiro(
-                              tipoTela: 1,
-                              documents:
-                                  financeiroController.documentsRecebidos));
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: widthScreen,
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: Text(
-                                'DETALHES'.toUpperCase(),
-                                style: GoogleFonts.montserrat(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1),
+                      GetBuilder<FinanceiroController>(builder: (_) {
+                        return financeiroController.documentsRecebidos.length > 0 ? InkWell(
+                          onTap: () {
+                            Get.to(() => MaisFinanceiro(
+                                tipoTela: 1,
+                                documents:
+                                financeiroController.documentsRecebidos));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: widthScreen,
+                              decoration: BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Text(
+                                  'DETALHES'.toUpperCase(),
+                                  style: GoogleFonts.montserrat(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ) : Container(),
+                        ) : Container();
+                      })
                     ],
                   ),
                 ),
@@ -663,9 +665,9 @@ class Financeiro extends StatelessWidget {
                                   padding: const EdgeInsets.only(bottom: 32, left: 8, top: 32),
                                   child: Column(
                                     children: [
-                                      Icon(FontAwesomeIcons.exclamation, size: 48, color: azul_principal),
+                                      Icon(FontAwesomeIcons.exclamation, size: 48, color: cor_do_app),
                                       SizedBox(height: 8),
-                                      Text('Nada foi encontrado.', style: GoogleFonts.quicksand(color: azul_principal, fontSize: 18),),
+                                      Text('Nada foi encontrado.', style: GoogleFonts.quicksand(color: cor_do_app, fontSize: 18),),
                                     ],
                                   ),
                                 );
@@ -681,34 +683,36 @@ class Financeiro extends StatelessWidget {
                           }
                         },
                       ),
-                      financeiroController.documentsGastos.length > 0 ? InkWell(
-                        onTap: () {
-                          Get.to(() => MaisFinanceiro(
-                              tipoTela: 2,
-                              documents: financeiroController.documentsGastos));
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: widthScreen,
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: Text(
-                                'DETALHES'.toUpperCase(),
-                                style: GoogleFonts.montserrat(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1),
+                      GetBuilder<FinanceiroController>(builder: (_) {
+                        return financeiroController.documentsGastos.length > 0 ? InkWell(
+                          onTap: () {
+                            Get.to(() => MaisFinanceiro(
+                                tipoTela: 2,
+                                documents: financeiroController.documentsGastos));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: widthScreen,
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Text(
+                                  'DETALHES'.toUpperCase(),
+                                  style: GoogleFonts.montserrat(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ) : Container(),
+                        ) : Container();
+                      }),
                     ],
                   ),
                 ),
@@ -805,9 +809,9 @@ class Financeiro extends StatelessWidget {
                                   padding: const EdgeInsets.only(bottom: 32, left: 8, top: 32),
                                   child: Column(
                                     children: [
-                                      Icon(FontAwesomeIcons.exclamation, size: 48, color: azul_principal),
+                                      Icon(FontAwesomeIcons.exclamation, size: 48, color: cor_do_app),
                                       SizedBox(height: 8),
-                                      Text('Não existem fontes ativas.', style: GoogleFonts.quicksand(color: azul_principal, fontSize: 18),),
+                                      Text('Não existem fontes ativas.', style: GoogleFonts.quicksand(color: cor_do_app, fontSize: 18),),
                                     ],
                                   ),
                                 );
@@ -874,7 +878,7 @@ class Financeiro extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: azul_principal,
+              color: cor_do_app,
               borderRadius: BorderRadius.circular(300),
             ),
             child: Icon(
@@ -957,7 +961,7 @@ class Financeiro extends StatelessWidget {
           child: Container(
             width: 100,
             decoration: BoxDecoration(
-              color: azul_principal,
+              color: cor_do_app,
               borderRadius: BorderRadius.circular(5),
             ),
             alignment: Alignment.center,

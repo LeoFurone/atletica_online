@@ -4,8 +4,8 @@ import 'package:atletica_online/components/myAppBar.dart';
 import 'package:atletica_online/components/tituloSessao.dart';
 import 'package:atletica_online/controllers/financeiro/financeiroController.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'graficosFinanceiro.dart';
 import '../../controllers/financeiro/transacaoController.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -59,14 +59,14 @@ class RegistrarTransacao extends StatelessWidget {
                     Text(
                       'R\$ ',
                       style: GoogleFonts.quicksand(
-                          fontSize: 50, color: azul_principal),
+                          fontSize: 50, color: cor_do_app),
                     ),
                     Flexible(
                       child: TextField(
                           controller: valor,
                           keyboardType: TextInputType.number,
                           style: GoogleFonts.quicksand(
-                              fontSize: 50, color: azul_principal),
+                              fontSize: 50, color: cor_do_app),
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: '00,00',
@@ -228,12 +228,12 @@ class RegistrarTransacao extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Icon(FontAwesomeIcons.exclamation,
-                                      size: 48, color: azul_principal),
+                                      size: 48, color: cor_do_app),
                                   SizedBox(height: 8),
                                   Text(
                                     'Adicione uma fonte financeira ativa para prosseguir!',
                                     style: GoogleFonts.quicksand(
-                                      color: azul_principal,
+                                      color: cor_do_app,
                                       fontSize: 18,
                                     ),
                                     textAlign: TextAlign.center,
@@ -284,7 +284,10 @@ class RegistrarTransacao extends StatelessWidget {
                               "descricao": descricao.text,
                               "fonte": transacaoController.fonte,
                               "mes": mesAtual,
-                              "ano": anoAtual
+                              "ano": anoAtual,
+                              "responsavel": FirebaseAuth.instance.currentUser!.email!.substring(0,FirebaseAuth.instance.currentUser!.email!.indexOf('@')),
+                              "tipo": 'recebido',
+                              "hora_conclusao": DateTime.now().toString(),
                             };
 
                             CollectionReference collectionReference =
@@ -330,8 +333,12 @@ class RegistrarTransacao extends StatelessWidget {
                                   double.parse(valor.text.replaceAll(',', '.')),
                               "descricao": descricao.text,
                               "fonte": transacaoController.fonte,
+                              "responsavel": FirebaseAuth.instance.currentUser!.email!.substring(0,FirebaseAuth.instance.currentUser!.email!.indexOf('@')),
                               "mes": mesAtual,
                               "ano": anoAtual,
+                              "tipo": 'gasto',
+                              "hora_conclusao": DateTime.now().toString(),
+
                             };
 
                             CollectionReference collectionReference =
@@ -384,7 +391,7 @@ class RegistrarTransacao extends StatelessWidget {
                     child: Container(
                       height: 50,
                       width: widthScreen - 16,
-                      decoration: BoxDecoration(color: azul_principal),
+                      decoration: BoxDecoration(color: cor_do_app),
                       child: Center(
                         child: Text(
                           'SALVAR',
@@ -465,7 +472,7 @@ class RegistrarTransacao extends StatelessWidget {
             keyboardType: type,
             textCapitalization: TextCapitalization.sentences,
             maxLines: lines,
-            cursorColor: azul_principal,
+            cursorColor: cor_do_app,
             style: GoogleFonts.quicksand(fontSize: 16),
             decoration: InputDecoration(
               border: InputBorder.none,
@@ -492,7 +499,7 @@ class RegistrarTransacao extends StatelessWidget {
             maxLines: null,
             minLines: null,
             expands: true,
-            cursorColor: azul_principal,
+            cursorColor: cor_do_app,
             style: GoogleFonts.quicksand(fontSize: 16),
             decoration: InputDecoration(
               border: InputBorder.none,

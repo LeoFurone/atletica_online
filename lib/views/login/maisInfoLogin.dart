@@ -1,7 +1,11 @@
+import 'dart:convert';
+
+import 'package:atletica_online/components/dialogs/aviso.dart';
+import 'package:atletica_online/components/myCircularProgress.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 class MaisInfoLogin extends StatelessWidget {
   final TextEditingController nome = TextEditingController();
@@ -80,15 +84,53 @@ class MaisInfoLogin extends StatelessWidget {
               Center(
                 child: InkWell(
                   onTap: () async {
-                    print(nome.text + '\n' + responsavel.text);
 
-                    final Email email = Email(
-                      body: nome.text + '\n' + responsavel.text,
-                      subject: 'Nova solicitação - App Atlética',
-                      recipients: ['leonardo.furone@gmail.com'],
-                      isHTML: false,
-                    );
-                    await FlutterEmailSender.send(email);
+                    if(responsavel.text.contains('@') && nome.text != "") {
+
+                      Get.dialog(
+                          MaterialApp(
+                            home: Scaffold(
+                              backgroundColor: Colors.transparent,
+                              body: Container(
+                                alignment: Alignment.center,
+                                child: Container(
+                                  height: 100,
+                                  width: 100,
+                                  color: Colors.white,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: MyCircularProgress(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            debugShowCheckedModeBanner: false,
+                          )
+                      );
+                      dynamic response = await enviarEmail();
+
+                      if(response.statusCode == 200) {
+                        Get.back();
+                        Get.dialog(
+                            Aviso(
+                              titulo: 'Solicitação enviada com sucesso!',
+                              subTitulo: 'Aguarde que em breve entraremos em contato com você.',
+                              color: Colors.green,
+
+                            ));
+                      } else {
+                        Get.back();
+                        Get.dialog(
+                            Aviso(
+                              titulo: 'Erro ao enviar solicitação',
+                              subTitulo: 'Tente novamente.',
+                              color: Colors.red,
+                            ));
+                      }
+
+                    } else {
+                      Get.dialog(Aviso(titulo: 'Seus dados foram preenchidos de maneira incorreta', subTitulo: 'Confira novamente e veja qual é o problema.', color: Colors.red));
+                    }
                   },
                   child: Container(
                     width: widthScreen - 16,
@@ -153,5 +195,34 @@ class MaisInfoLogin extends StatelessWidget {
             borderSide: BorderSide(color: Colors.black, width: 2)),
       ),
     );
+  }
+
+  Future enviarEmail() async {
+
+    final serviceId = 'service_9ezzjkq';
+    final templateId = 'template_qnnrqb9';
+    final userId = 'user_2cOKhK4ojJk1le5DyTli6';
+
+    final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
+    final response = await http.post(
+      url,
+      headers: {
+        'origin': 'http://localhost',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'service_id': serviceId,
+        'template_id': templateId,
+        'user_id': userId,
+        'template_params': {
+          'nome_atletica': nome.text,
+          'email_responsavel': responsavel.text,
+        }
+      }),
+    );
+
+
+    return response;
+
   }
 }

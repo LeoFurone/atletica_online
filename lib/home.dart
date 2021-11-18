@@ -1,12 +1,13 @@
 import 'package:atletica_online/components/myAppBar.dart';
 import 'package:atletica_online/components/myCircularProgress.dart';
 import 'package:atletica_online/views/dashboard.dart';
+import 'package:atletica_online/views/login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'views/financeiro/financeiro.dart';
 import 'package:atletica_online/views/opcoes.dart';
 import 'package:atletica_online/views/patrimonio.dart';
-import 'package:atletica_online/views/atividades.dart';
+import 'views/atividades/atividades.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -42,10 +43,6 @@ class Home extends StatelessWidget {
           widthScreen: widthScreen,
           safeArea: safeArea),
       Atividades(
-          heightScreen: heightScreen,
-          widthScreen: widthScreen,
-          safeArea: safeArea),
-      Patrimonio(
           heightScreen: heightScreen,
           widthScreen: widthScreen,
           safeArea: safeArea),
@@ -93,7 +90,7 @@ class Home extends StatelessWidget {
                       height: heightScreen * 0.1,
                       width: widthScreen,
                       decoration: BoxDecoration(
-                        color: azul_principal,
+                        color: cor_do_app,
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15)),
@@ -155,33 +152,105 @@ class Home extends StatelessWidget {
                           ),
                           Expanded(
                             child: InkWell(
-                              onTap: () {
-                                menuController.atualizarIndex(3);
+                              onTap: () async {
+                                Get.dialog(MaterialApp(
+                                  home: Scaffold(
+                                    backgroundColor: Colors.transparent,
+                                    body: Align(
+                                      alignment: Alignment.center,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        width: widthScreen * 0.8,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 24.0),
+                                              child: Text(
+                                                'Deseja realmente sair?',
+                                                style: GoogleFonts.quicksand(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                            SizedBox(height: 4),
+                                            Padding(
+                                              padding:
+                                              const EdgeInsets.symmetric(horizontal: 8),
+                                              child: Text(
+                                                'Você precisará de Internet para se conectar novamente.',
+                                                style: GoogleFonts.quicksand(
+                                                  fontSize: 12,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                            SizedBox(height: 32),
+                                            GestureDetector(
+                                              onTap: () async {
+//                                        Get.back();
+                                                await FirebaseAuth.instance.signOut();
+                                                Get.offAll(Login());
+                                                menuController.atualizarIndex(0);
+                                              },
+                                              child: Container(
+                                                width: widthScreen * 0.8,
+                                                height: 60,
+                                                color: Colors.grey[100],
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  'Sair',
+                                                  style: GoogleFonts.quicksand(
+                                                      color: Colors.red,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.w700),
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () async {
+                                                Get.back();
+                                              },
+                                              child: Container(
+                                                width: widthScreen * 0.8,
+                                                height: 60,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.only(
+                                                      bottomLeft: Radius.circular(10),
+                                                      bottomRight: Radius.circular(10),
+                                                    )),
+                                                child: Text(
+                                                  'Cancelar',
+                                                  style: GoogleFonts.quicksand(
+                                                      color: Colors.grey,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.w700),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  debugShowCheckedModeBanner: false,
+                                ));
+
                               },
                               child: GetBuilder<MenuController>(
                                 builder: (_) {
                                   return itemMenu(
                                       heightScreen,
-                                      FontAwesomeIcons.boxOpen,
-                                      'Patrimônio',
+                                      Icons.power_settings_new,
+                                      'Sair',
                                       3,
-                                      menuController.index);
-                                },
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                menuController.atualizarIndex(4);
-                              },
-                              child: GetBuilder<MenuController>(
-                                builder: (_) {
-                                  return itemMenu(
-                                      heightScreen,
-                                      FontAwesomeIcons.cog,
-                                      'Opções',
-                                      4,
                                       menuController.index);
                                 },
                               ),
@@ -249,7 +318,7 @@ class Home extends StatelessWidget {
                             child: Container(
                               height: 40,
                               width: widthScreen / 2,
-                              color: azul_principal,
+                              color: cor_do_app,
                               alignment: Alignment.center,
                               child: Text(
                                 'Entrar'.toUpperCase(),
@@ -279,8 +348,8 @@ class Home extends StatelessWidget {
                 return Scaffold(
                   body: Container(
                     alignment: Alignment.center,
-                    child: Text('teste 2'),
-//                child: MyCircularProgress(),
+//                    child: Text('teste 2'),
+                child: MyCircularProgress(),
                   ),
                 );
               }
@@ -290,8 +359,8 @@ class Home extends StatelessWidget {
           return Scaffold(
             body: Container(
               alignment: Alignment.center,
-              child: Text('teste 1'),
-//              child: MyCircularProgress(),
+//              child: Text('teste 1'),
+              child: MyCircularProgress(),
             ),
           );
         }

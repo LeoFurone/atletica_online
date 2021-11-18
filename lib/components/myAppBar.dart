@@ -27,13 +27,13 @@ class MyAppBar extends StatelessWidget {
         Container(
           width: widthScreen,
           height: safeArea,
-          color: azul_principal,
+          color: cor_do_app,
         ),
         Container(
           width: widthScreen,
           height: heightScreen * 0.10,
           decoration: BoxDecoration(
-              color: azul_principal,
+              color: cor_do_app,
               border: Border(
                   bottom: BorderSide(width: 0.4, color: Colors.white))),
           child: Center(

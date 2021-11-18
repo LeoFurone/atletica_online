@@ -254,12 +254,12 @@ class Patrimonio extends StatelessWidget {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: azul_principal, width: 2)
+                          border: Border.all(color: cor_do_app, width: 2)
                       ),
                       child: Text(
                         'MAIS',
                         style: GoogleFonts.quicksand(
-                            color: azul_principal,
+                            color: cor_do_app,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1
                         ),
@@ -561,12 +561,12 @@ class Patrimonio extends StatelessWidget {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: azul_principal, width: 2)
+                          border: Border.all(color: cor_do_app, width: 2)
                       ),
                       child: Text(
                         'MAIS',
                         style: GoogleFonts.quicksand(
-                            color: azul_principal,
+                            color: cor_do_app,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1
                         ),
@@ -718,12 +718,12 @@ class Patrimonio extends StatelessWidget {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: azul_principal, width: 2)
+                          border: Border.all(color: cor_do_app, width: 2)
                       ),
                       child: Text(
                         'MAIS',
                         style: GoogleFonts.quicksand(
-                            color: azul_principal,
+                            color: cor_do_app,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1
                         ),
@@ -747,7 +747,7 @@ class Patrimonio extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: azul_principal,
+                color: cor_do_app,
                 borderRadius: BorderRadius.circular(300),
               ),
               child: Icon(FontAwesomeIcons.ellipsisV, color: Colors.white,),

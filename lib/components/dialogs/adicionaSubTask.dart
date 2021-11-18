@@ -8,7 +8,7 @@ import 'package:atletica_online/globals.dart' as globals;
 
 import '../colors.dart';
 
-class AdicionaFonte extends StatelessWidget {
+class AdicionaSubTask extends StatelessWidget {
   final TextEditingController descricaoController = TextEditingController();
 
   @override
@@ -39,81 +39,13 @@ class AdicionaFonte extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(height: 16),
-                    TituloSessao(titulo: 'Descrição'),
+                    TituloSessao(titulo: 'Adicionar Sub Task'),
                     Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8),
                         child: myTextField(descricaoController)),
                     GestureDetector(
                       onTap: () {
-                        Map<String, dynamic> dadosApp = {
-                          "ativa": true,
-                          "descricao": descricaoController.text
-                        };
-
-                        if (descricaoController.text.isNotEmpty) {
-                          CollectionReference collectionReference =
-                              FirebaseFirestore.instance
-                                  .collection('atleticas')
-                                  .doc(globals.atletica_firebase)
-                                  .collection('financeiro')
-                                  .doc('fontes')
-                                  .collection('dados');
-                          collectionReference
-                              .doc(DateTime.now().toString())
-                              .set(dadosApp);
-                          Get.back();
-                          Get.snackbar(
-                            '',
-                            '',
-                            icon: Icon(
-                              FontAwesomeIcons.check,
-                              color: Colors.white,
-                            ),
-                            titleText: Text(
-                              'Fonte salva com sucesso!',
-                              style: GoogleFonts.quicksand(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            messageText: Text(
-                              'Sua fonte já está disponível para uso.',
-                              style: GoogleFonts.quicksand(
-                                fontSize: 14,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            backgroundColor: Colors.green,
-                          );
-                        } else {
-                          Get.snackbar(
-                            '',
-                            '',
-                            icon: Icon(
-                              FontAwesomeIcons.times,
-                              color: Colors.white,
-                            ),
-                            titleText: Text(
-                              'Erro ao salvar a fonte!',
-                              style: GoogleFonts.quicksand(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            messageText: Text(
-                              'Coloque uma descrição válida.',
-                              style: GoogleFonts.quicksand(
-                                fontSize: 14,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            backgroundColor: Colors.red,
-                          );
-                        }
+                        Get.back(result: descricaoController.text);
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),

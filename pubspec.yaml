@@ -34,6 +34,9 @@ dependencies:
   device_preview: ^0.7.3
   flutter_email_sender: ^5.0.0
   data_connection_checker: ^0.3.4
+  grouped_list: ^4.1.0
+  flutter_typeahead: ^3.2.1
+  http: ^0.13.0
 
 
 

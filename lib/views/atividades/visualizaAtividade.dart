@@ -291,7 +291,6 @@ class _VisualizaAtividadeState extends State<VisualizaAtividade> {
                     dados = {
                       "concluida": chbox_concluida,
                       "descricao": widget.atividade['descricao'],
-                      "interessados": widget.atividade['interessados'],
                       "prazo": widget.atividade['prazo'],
                       "responsavel": widget.atividade['responsavel'],
                       "subtasks": subtasks,
@@ -303,7 +302,6 @@ class _VisualizaAtividadeState extends State<VisualizaAtividade> {
                   dados = {
                   "concluida": chbox_concluida,
                   "descricao": widget.atividade['descricao'],
-                  "interessados": widget.atividade['interessados'],
                   "prazo": widget.atividade['prazo'],
                   "responsavel": widget.atividade['responsavel'],
                   "subtasks": subtasks,

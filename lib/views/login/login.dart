@@ -1,5 +1,6 @@
 import 'package:atletica_online/components/colors.dart';
 import 'package:atletica_online/controllers/loginController.dart';
+import 'package:atletica_online/views/login/perguntasFrequentes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -207,13 +208,22 @@ class Login extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                )
+                ),
+
               ],
             ),
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: cor_do_app,
+          child: Icon(FontAwesomeIcons.question),
+          onPressed: () {
+            Get.to(() => PerguntasFrequentes(), transition: Transition.rightToLeft);
+          },
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:atletica_online/components/colors.dart';
 import 'package:atletica_online/components/dialogs/aviso.dart';
 import 'package:atletica_online/components/myCircularProgress.dart';
 import 'package:flutter/material.dart';
@@ -31,10 +32,10 @@ class MaisInfoLogin extends StatelessWidget {
             children: [
               Container(
                 height: safeArea,
-                color: Colors.black,
+                color: cor_do_app,
               ),
               Container(
-                color: Colors.black,
+                color: cor_do_app,
                 width: widthScreen,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -136,7 +137,7 @@ class MaisInfoLogin extends StatelessWidget {
                     width: widthScreen - 16,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: Colors.black,
+                      color: cor_do_app,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     alignment: Alignment.center,
@@ -164,7 +165,7 @@ class MaisInfoLogin extends StatelessWidget {
       child: Text(
         titulo.toUpperCase(),
         style: GoogleFonts.quicksand(
-          color: Colors.black,
+          color: cor_do_app,
           letterSpacing: 2,
           fontWeight: FontWeight.bold,
           fontSize: 18,
@@ -192,7 +193,7 @@ class MaisInfoLogin extends StatelessWidget {
             borderRadius: const BorderRadius.all(
               const Radius.circular(10),
             ),
-            borderSide: BorderSide(color: Colors.black, width: 2)),
+            borderSide: BorderSide(color: cor_do_app, width: 2)),
       ),
     );
   }

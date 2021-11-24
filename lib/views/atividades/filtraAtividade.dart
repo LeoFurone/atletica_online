@@ -145,21 +145,24 @@ class FiltraAtividades extends StatelessWidget {
                           )
                               : Padding(
                             padding: const EdgeInsets.only(
-                                bottom: 8, left: 8, top: 8),
-                            child: Column(
-                              children: [
-                                Icon(FontAwesomeIcons.exclamation,
-                                    size: 48, color: cor_do_app),
-                                SizedBox(height: 8),
-                                Text(
-                                  'Não há nenhuma tag cadastrada!',
-                                  style: GoogleFonts.quicksand(
-                                    color: cor_do_app,
-                                    fontSize: 18,
+                                bottom: 8, left: 0, top: 8),
+                            child: Container(
+                              width: widthScreen - 16,
+                              child: Column(
+                                children: [
+                                  Icon(FontAwesomeIcons.exclamation,
+                                      size: 48, color: cor_do_app),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    'Não há nenhuma tag cadastrada!',
+                                    style: GoogleFonts.quicksand(
+                                      color: cor_do_app,
+                                      fontSize: 18,
+                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         },

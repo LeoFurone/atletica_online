@@ -168,131 +168,161 @@ class Dashboard extends StatelessWidget {
                     if (snapshot.hasData) {
                       dashboardController.atualizaLista(snapshot.data!);
 
-                      return GetBuilder<DashboardController>(
-                        builder: (_) {
-                          return ListView.builder(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            itemCount: dashboardController.lista.length,
-                            itemBuilder: (context, index) {
-                              String mes = dashboardController.lista[index]
-                                      ['hora_conclusao']
-                                  .substring(5, 7);
-                              String dia = dashboardController.lista[index]
-                                      ['hora_conclusao']
-                                  .substring(8, 10);
+                      if(dashboardController.lista.length > 0) {
+                        return GetBuilder<DashboardController>(
+                          builder: (_) {
+                            return ListView.builder(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              itemCount: dashboardController.lista.length,
+                              itemBuilder: (context, index) {
+                                String mes = dashboardController.lista[index]
+                                ['hora_conclusao']
+                                    .substring(5, 7);
+                                String dia = dashboardController.lista[index]
+                                ['hora_conclusao']
+                                    .substring(8, 10);
 
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 8),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(7)),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          height: 40,
-                                          width: 40,
-                                          decoration: BoxDecoration(
-                                            color: corAcontecimento(
-                                                dashboardController
-                                                    .lista[index]),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(100)),
-                                          ),
-                                          child: verificaIcone(
-                                              dashboardController.lista[index]),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              width: widthScreen - 24 - 40 - 16,
-                                              child: Text(
-                                                  titulo(dashboardController
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(7)),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            height: 40,
+                                            width: 40,
+                                            decoration: BoxDecoration(
+                                              color: corAcontecimento(
+                                                  dashboardController
                                                       .lista[index]),
-                                                  style: GoogleFonts.raleway(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                  )),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(100)),
                                             ),
-                                            SizedBox(height: 4),
-                                            Container(
-                                              width: widthScreen - 24 - 40 - 16,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Container(
-                                                      child: Row(
-                                                    children: [
-                                                      Icon(
-                                                          FontAwesomeIcons.user,
-                                                          size: 14),
-                                                      SizedBox(width: 4),
-                                                      Text(
-                                                        dashboardController
-                                                                .lista[index]
-                                                            ['responsavel'],
-                                                        style:
-                                                            GoogleFonts.raleway(
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  )),
-                                                  Container(
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          dia +
-                                                              '/' +
-                                                              mes +
-                                                              ' - ' +
-                                                              formataHora(DateTime.parse(
-                                                                  dashboardController
-                                                                              .lista[
-                                                                          index]
-                                                                      [
-                                                                      'hora_conclusao'])),
-                                                          style: GoogleFonts
-                                                              .raleway(
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                        SizedBox(width: 4),
-                                                        Icon(
-                                                          FontAwesomeIcons
-                                                              .clock,
-                                                          size: 14,
-                                                        )
-                                                      ],
-                                                    ),
-                                                  )
-                                                ],
+                                            child: verificaIcone(
+                                                dashboardController.lista[index]),
+                                          ),
+                                          SizedBox(width: 8),
+                                          Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: widthScreen - 24 - 40 - 16,
+                                                child: Text(
+                                                    titulo(dashboardController
+                                                        .lista[index]),
+                                                    style: GoogleFonts.raleway(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16,
+                                                    )),
                                               ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
+                                              SizedBox(height: 4),
+                                              Container(
+                                                width: widthScreen - 24 - 40 - 16,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                                  children: [
+                                                    Container(
+                                                        child: Row(
+                                                          children: [
+                                                            Icon(
+                                                                FontAwesomeIcons.user,
+                                                                size: 14),
+                                                            SizedBox(width: 4),
+                                                            Text(
+                                                              dashboardController
+                                                                  .lista[index]
+                                                              ['responsavel'],
+                                                              style:
+                                                              GoogleFonts.raleway(
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )),
+                                                    Container(
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
+                                                            dia +
+                                                                '/' +
+                                                                mes +
+                                                                ' - ' +
+                                                                formataHora(DateTime.parse(
+                                                                    dashboardController
+                                                                        .lista[
+                                                                    index]
+                                                                    [
+                                                                    'hora_conclusao'])),
+                                                            style: GoogleFonts
+                                                                .raleway(
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 4),
+                                                          Icon(
+                                                            FontAwesomeIcons
+                                                                .clock,
+                                                            size: 14,
+                                                          )
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      } else {
+                        return Container(
+                          width: widthScreen,
+                          height: heightScreen * 0.6,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(height: 32),
+                              Icon(FontAwesomeIcons.exclamation,
+                                  size: 160, color: cor_do_app),
+                              SizedBox(height: 32),
+                              Text(
+                                'Nenhuma atividade encontrada',
+                                style: GoogleFonts.quicksand(
+                                  color: cor_do_app,
+                                  fontSize: 20,
                                 ),
-                              );
-                            },
-                          );
-                        },
-                      );
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     } else {
-                      return Text('erro');
+                      return Column(
+                        children: [
+                          Icon(FontAwesomeIcons.exclamation, size: 48, color: cor_do_app),
+                          SizedBox(height: 8),
+                          Text('Nada foi encontrado.', style: GoogleFonts.quicksand(color: cor_do_app, fontSize: 18),),
+                        ],
+                      );
                     }
                   } else {
                     return Container(

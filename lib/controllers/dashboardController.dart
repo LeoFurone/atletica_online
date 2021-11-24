@@ -8,7 +8,9 @@ class DashboardController extends GetxController {
   String hora_atual = DateTime.now().hour.toString() + ':' + DateTime.now().minute.toString();
 
   void atualizaHora() {
-    hora_atual =  DateTime.now().hour.toString() + ':' + DateTime.now().minute.toString();
+    String hora = DateTime.now().hour.toString().length > 1 ? DateTime.now().hour.toString() : '0' + DateTime.now().hour.toString();
+    String minuto = DateTime.now().minute.toString().length > 1 ? DateTime.now().minute.toString() : '0' + DateTime.now().minute.toString();
+    hora_atual =  hora + ':' + minuto;
     update();
   }
 

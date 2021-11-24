@@ -210,8 +210,14 @@ class Financeiro extends StatelessWidget {
                       future: trazerValorCaixa(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
-                          financeiroController.atualizarCaixaAtual(
-                              double.parse(snapshot.data!['valor']));
+                          if(snapshot.data!.exists == false) {
+                            financeiroController.atualizarCaixaAtual(double.parse('0'));
+                          } else {
+                            financeiroController.atualizarCaixaAtual(double.parse(snapshot.data!['valor']));
+                          }
+//                          financeiroController.atualizarCaixaAtual(double.parse(snapshot.data!['valor']));
+
+
                           return GetBuilder<FinanceiroController>(builder: (_) {
                             return Text(
                               'R\$ ' +

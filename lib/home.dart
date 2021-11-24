@@ -1,3 +1,4 @@
+import 'package:atletica_online/components/dialogs/aviso.dart';
 import 'package:atletica_online/components/myAppBar.dart';
 import 'package:atletica_online/components/myCircularProgress.dart';
 import 'package:atletica_online/views/dashboard.dart';
@@ -306,10 +307,18 @@ class Home extends StatelessWidget {
                                   });
                                   Get.offAll(() => Home());
                                 } else {
-                                  print('atletica não existente');
+                                  Get.dialog(Aviso(
+                                    titulo: "Não foi encontrada nenhuma atlética!",
+                                    subTitulo: "Confira os dados e tente novamente.",
+                                    color: Colors.red,
+                                  ));
                                 }
                               } else {
-                                print('em branco');
+                                Get.dialog(Aviso(
+                                  titulo: "Não foi encontrada nenhuma atlética!",
+                                  subTitulo: "Confira os dados e tente novamente.",
+                                  color: Colors.red,
+                                ));
                               }
 
 
